@@ -99,7 +99,7 @@
 </div>
 
 <h1>Privacy Policy</h1>
-<p class="meta">Last updated: May 26, 2026</p>
+<p class="meta">Last updated: June 16, 2026</p>
 
 <p>
   This Privacy Policy describes how <strong>InboxUnleash</strong> (the "Extension", "we", "us") handles your information.
@@ -149,15 +149,11 @@
     <tr>
       <td><code>gmail.modify</code></td>
       <td>Read, modify, and send Gmail messages, threads, and labels (but not permanently delete them).</td>
-      <td>To display emails inside smart folders, organize threads, apply your existing labels, archive threads
-          you select, and send emails on your behalf in response to explicit user actions (see Section 4 for details).
-          The Extension never sends emails automatically without your explicit click.</td>
-    </tr>
-    <tr>
-      <td><code>gmail.labels</code></td>
-      <td>Read existing Gmail labels.</td>
-      <td>To let you use your existing Gmail labels as criteria when defining smart folders. The Extension reads
-          labels only — it does not create new Gmail labels on its own.</td>
+      <td>To display emails inside smart folders, organize threads, read your existing Gmail labels so you can use
+          them as criteria when defining smart folders, apply labels, archive threads you select, and send emails
+          on your behalf in response to explicit user actions (see Section 4 for details). The Extension reads
+          labels only — it does not create new Gmail labels on its own. The Extension never sends emails
+          automatically without your explicit click.</td>
     </tr>
     <tr>
       <td><code>contacts.readonly</code></td>
@@ -249,8 +245,10 @@
 <h2>5. Where Your Data Is Stored</h2>
 <ul>
   <li>
-    <strong>Locally in your browser:</strong> The Extension caches contacts, folder configurations, tasks, and
-    UI state in your browser's local storage. This data never leaves your device.
+    <strong>Locally in your browser:</strong> The Extension caches contacts, folder configurations, tasks,
+    UI state, and email metadata in your browser's local storage. Email metadata includes sender and
+    recipient addresses, subject lines, dates, and thread identifiers — but <em>not</em> the body content
+    of your emails. This data never leaves your device.
   </li>
   <li>
     <strong>In your own Google Drive:</strong> Smart folder definitions and settings are saved to a dedicated
