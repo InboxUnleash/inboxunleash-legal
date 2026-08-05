@@ -1,0 +1,2772 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="InboxHQ">
+<meta name="theme-color" content="#ffffff">
+<title>InboxHQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f7fa;--surface:#ffffff;--surface2:#f0f2f5;--surface3:#e8eaed;
+  --accent:#1a73e8;--accent-d:#1557b0;--green:#0f9d58;--red:#d93025;
+  --yellow:#f29900;--purple:#7c4dff;--text:#202124;--text-2:#5f6368;
+  --text-3:#9aa0a6;--border:#e0e0e0;--radius:14px;--sans:'Heebo',sans-serif;
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+button{font-family:var(--sans);cursor:pointer;border:none;outline:none}
+input,textarea{font-family:var(--sans);outline:none;border:none}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto}
+
+/* ── LOGIN ── */
+#screen-login{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 32px;text-align:center}
+.login-logo{width:72px;height:72px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:28px;box-shadow:0 12px 40px rgba(26,115,232,0.25)}
+.login-title{font-size:28px;font-weight:900;letter-spacing:-0.5px;margin-bottom:8px}
+.login-sub{font-size:15px;color:var(--text-2);line-height:1.6;margin-bottom:40px}
+.btn-google{display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:16px 28px;border-radius:50px;font-size:16px;font-weight:600;width:100%;justify-content:center;margin-bottom:16px;transition:all .2s}
+.btn-google:active{transform:scale(0.97)}
+.btn-google svg{width:22px;height:22px;flex-shrink:0}
+.setup-hint{margin-top:32px;padding:16px;background:rgba(242,153,0,.08);border:1px solid rgba(242,153,0,.2);border-radius:var(--radius);font-size:13px;color:var(--yellow);line-height:1.7;text-align:right;display:none}
+.setup-hint a{color:var(--accent)}
+.error-banner{background:rgba(217,48,37,.08);border:1px solid rgba(217,48,37,.2);color:var(--red);border-radius:var(--radius);padding:14px 16px;font-size:14px;margin-bottom:16px;display:none}
+
+/* ── MAIN ── */
+
+.topbar{display:flex;align-items:center;padding:calc(var(--safe-top) + 8px) 14px 8px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.06);gap:0;direction:ltr;}
+.topbar-title{font-size:17px;font-weight:900;letter-spacing:-0.3px;line-height:1.2}
+.topbar-brand{display:flex;flex-direction:column;justify-content:center;}
+.topbar-slogan{font-size:9.5px;color:var(--text-3);margin-top:1px;}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;cursor:pointer;flex-shrink:0}
+.topbar-icon-btn{width:28px;height:28px;border-radius:8px;background:none;border:1px solid var(--border);cursor:pointer;display:none;align-items:center;justify-content:center;color:var(--text-2);flex-shrink:0;}
+.tabs{display:flex;padding:5px 8px;gap:4px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x mandatory;}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:4px 10px;border-radius:50px;font-size:13px;font-weight:600;color:var(--text-2);background:transparent;white-space:nowrap;transition:all .15s;border:1.5px solid transparent;flex-shrink:0;scroll-snap-align:start;}
+.tab.active{color:var(--accent);background:rgba(26,115,232,.08);border-color:rgba(26,115,232,.2)}
+.tab:hover:not(.active){background:var(--surface2);}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;padding-bottom:calc(var(--safe-bottom) + 80px)}
+#screen-app,#screen-main,#screen-task,#screen-detail{display:flex;flex-direction:column}
+#screen-app{flex:1;overflow:hidden}
+#screen-main,#screen-task,#screen-detail{flex:1;overflow:hidden}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.stat-num{font-size:26px;font-weight:900;line-height:1;margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--text-2);font-weight:500}
+
+/* ══════════════════════════════
+   TASK CARD — Gmail style
+   ══════════════════════════════ */
+
+/* ── רשימת משימות ── */
+.task-list{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:4px}
+
+/* ── שורת משימה בודדת ── */
+.task-row{
+  display:flex;flex-direction:column;
+  border-bottom:1px solid var(--surface2);
+  background:#fff;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+}
+.task-row:last-child{border-bottom:none}
+.task-row.task-row-done{opacity:.55}
+.task-row.done-anim{animation:doneSlide .35s ease forwards}
+@keyframes doneSlide{0%{opacity:1;max-height:80px}100%{opacity:0;max-height:0;overflow:hidden}}
+
+/* ── שורה ראשית (row-main) ── */
+.task-row-main{display:flex;align-items:center;padding:10px 12px 10px 6px;gap:0}
+
+/* ── SVG checkbox ── */
+.task-check-svg{width:19px;height:19px;cursor:pointer;flex-shrink:0;opacity:.55;transition:opacity .15s;margin-left:10px;}
+.task-check-svg:hover{opacity:1}
+.task-check-svg.checked{opacity:1}
+
+/* ── תוכן ── */
+.task-row-body{flex:1;min-width:0;cursor:pointer}
+.task-row-title{
+  font-size:15px;font-weight:600;
+  line-height:1.4;margin-bottom:3px;
+  color:#202124;
+  word-break:break-word;
+}
+.task-row-title.done{text-decoration:line-through;color:var(--text-3)}
+.task-pin{font-size:13px;flex-shrink:0}
+
+/* ── פתקית ── */
+.task-sticky{display:flex;align-items:baseline;gap:4px;margin-bottom:3px}
+.task-sticky-icon{display:inline-flex;align-items:center;flex-shrink:0;}
+.task-sticky-text{font-size:13px;color:var(--text-2);line-height:1.5;flex:1;}
+
+/* ── מטה (תאריך, פרויקט, אחראי…) ── */
+.task-meta{display:flex;flex-wrap:wrap;gap:0;align-items:center;font-size:12px;color:var(--text)}
+
+/* ── תפריט פעולות (3 נקודות) ── */
+.task-actions{display:flex;align-items:center;gap:1px;flex-shrink:0;padding:0 4px 0 8px;}
+.task-menu-btn{width:26px;height:26px;border-radius:7px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:16px;letter-spacing:1px;transition:background .15s;padding-bottom:3px;}
+.task-menu-btn:hover{background:var(--surface2);}
+.task-dropdown{position:absolute;left:8px;top:calc(100% - 4px);background:white;border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:100;min-width:160px;overflow:hidden;display:none;}
+.task-dropdown.open{display:block;}
+.task-dd-item{display:flex;align-items:center;gap:9px;padding:9px 14px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;background:transparent;border:none;width:100%;text-align:right;font-family:var(--sans);}
+.task-dd-item:hover{background:var(--surface2);}
+.task-dd-item svg{width:15px;height:15px;flex-shrink:0;color:var(--text-3);}
+.task-dd-item.danger{color:var(--red);}
+.task-dd-item.danger svg{color:var(--red);}
+.task-dd-sep{height:1px;background:var(--border);margin:3px 0;}
+
+/* ── תתי-משימות ── */
+.task-subtasks{margin:0 10px 8px;padding:0;}
+.subtask-row{padding:7px 14px 7px 24px;border-top:1px dashed var(--border);display:flex;align-items:center;gap:5px;}
+.subtask-num{font-size:11px;color:var(--text-3);flex-shrink:0;min-width:18px;}
+.subtask-text{font-size:13px;color:var(--text);flex:1;font-weight:700;}
+.subtask-text.done{text-decoration:line-through;color:var(--text-3);font-weight:400;}
+.subtask-check{font-size:11px;color:var(--green);flex-shrink:0;}
+
+/* ── קבוצת משימות ── */
+.task-group-row{
+  display:flex;align-items:center;
+  padding:8px 14px;
+  background:#f8f9fa;
+  border-bottom:1px solid #e8eaed;
+  cursor:pointer;
+  gap:8px;
+  user-select:none;
+}
+.task-group-row:active{background:#f1f3f4}
+.task-group-arrow{font-size:11px;color:var(--text-2);transition:transform .2s;flex-shrink:0}
+.task-group-arrow.open{transform:rotate(90deg)}
+.task-group-name{font-size:13px;font-weight:700;color:var(--text-2);flex:1}
+.task-group-count{font-size:11px;color:var(--text-3);background:var(--surface2);padding:1px 7px;border-radius:10px}
+
+/* ── ישן (שמור לתאימות) ── */
+.task-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:0;margin-bottom:2px;display:flex;align-items:stretch;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
+.task-urgency-bar{display:none}
+.task-check-wrap{display:none}
+.task-body{flex:1;min-width:0;padding:12px 14px;cursor:pointer}
+.task-text{font-size:14px;font-weight:600;line-height:1.3;margin-bottom:4px}
+.task-text.done{text-decoration:line-through;color:var(--text-3)}
+.task-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 7px;border-radius:6px;background:var(--surface2);color:var(--text-2)}
+.chip.overdue{background:rgba(217,48,37,.08);color:var(--red)}.chip.soon{background:rgba(242,153,0,.08);color:var(--yellow)}.chip.ok{background:rgba(26,115,232,.08);color:var(--accent)}
+
+/* ── EMPTY / LOADING ── */
+.empty{text-align:center;padding:60px 20px;color:var(--text-3)}
+.empty-icon{font-size:48px;margin-bottom:16px}
+.empty-title{font-size:18px;font-weight:700;color:var(--text-2);margin-bottom:6px}
+.empty-sub{font-size:14px;line-height:1.6}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;color:var(--text-2);font-size:15px}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SNACKBAR ── */
+.snackbar{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:#202124;color:white;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.2);opacity:0;transition:all .3s;pointer-events:none;z-index:200;white-space:nowrap;max-width:90vw}
+.snackbar.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── PROJECTS LIST ── */
+.pv-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:border-color .2s}
+.btn-refresh{background:var(--surface2);border:1px solid var(--border);color:var(--text-2);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.btn-refresh:active{transform:rotate(180deg)}
+
+/* ── DETAIL SCREEN ── */
+#screen-detail{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.detail-topbar{display:flex;align-items:center;padding:calc(var(--safe-top) + 14px) 18px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.detail-title{font-size:17px;font-weight:900;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-back{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 14px 6px 10px;border-radius:10px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.btn-back:active{background:var(--surface3)}
+.detail-tabs{display:flex;padding:0 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.detail-tabs::-webkit-scrollbar{display:none}
+.detail-tab{padding:12px 14px;font-size:13px;font-weight:600;color:var(--text-2);background:transparent;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0}
+.detail-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.detail-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;padding-bottom:calc(var(--safe-bottom) + 80px)}
+
+/* ── PROJECT HERO ── */
+.project-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.hero-icon-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.hero-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.hero-name{font-size:22px;font-weight:900;letter-spacing:-0.3px}
+.hero-group{font-size:13px;color:var(--text-2);margin-top:2px}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.hero-stat{text-align:center;background:var(--surface2);border-radius:10px;padding:10px 6px}
+.hero-stat-num{font-size:20px;font-weight:900;line-height:1}
+.hero-stat-lbl{font-size:10px;color:var(--text-2);margin-top:3px;font-weight:500}
+.detail-section{margin-bottom:20px}
+.detail-section-title{font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.detail-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── MILESTONE ── */
+.milestone-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.ms-dot{width:10px;height:10px;min-width:10px;border-radius:50%;border:2px solid var(--text-3)}
+.ms-dot.done{background:var(--green);border-color:var(--green)}.ms-dot.overdue{background:var(--red);border-color:var(--red)}.ms-dot.upcoming{border-color:var(--accent)}
+.ms-name{flex:1;font-size:14px;font-weight:600}.ms-name.done{text-decoration:line-through;color:var(--text-3)}
+.ms-date{font-size:11px;font-family:monospace}
+
+/* ── CONTACT ── */
+.contact-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px}
+.contact-avatar{width:34px;height:34px;min-width:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white}
+.contact-name{font-size:14px;font-weight:600}.contact-email{font-size:11px;color:var(--text-2)}
+.contact-role{font-size:10px;color:var(--accent);background:rgba(26,115,232,.08);padding:1px 6px;border-radius:6px;margin-top:2px;display:inline-block}
+
+/* ── MONEY ── */
+.money-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.money-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.money-amount{font-size:20px;font-weight:900;margin-bottom:3px}.money-label{font-size:11px;color:var(--text-2)}
+.money-bar-wrap{background:var(--surface2);border-radius:6px;height:8px;overflow:hidden;margin:10px 0 6px}
+.money-bar-fill{height:100%;border-radius:6px;transition:width .6s ease}
+.money-pct{font-size:12px;color:var(--text-2);text-align:center}
+.inst-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:6px}
+.inst-paid-dot{width:8px;height:8px;min-width:8px;border-radius:50%}
+.inst-name{flex:1;font-size:13px;font-weight:600}
+.inst-amount{font-size:13px;font-weight:700}.inst-date{font-size:11px;color:var(--text-2)}
+
+/* ── TASK DETAIL MODAL ── */
+.task-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.task-modal{background:var(--surface);border-radius:24px 24px 0 0;padding:0;width:100%;max-width:480px;max-height:85vh;display:flex;flex-direction:column;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.task-modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0}
+.task-modal-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.task-modal-title{font-size:17px;font-weight:700;flex:1;line-height:1.3}
+.task-modal-body{flex:1;overflow-y:auto;padding:16px 20px;padding-bottom:calc(var(--safe-bottom) + 16px)}
+.task-detail-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--surface2)}
+.task-detail-row:last-child{border-bottom:none}
+.task-detail-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0;margin-top:1px}
+.task-detail-label{font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.task-detail-value{font-size:14px;font-weight:500;color:var(--text)}
+.task-modal-done-btn{width:calc(100% - 40px);margin:12px 20px;padding:14px;border-radius:12px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.task-modal-done-btn.mark-done{background:var(--green);color:white}
+.task-modal-done-btn.mark-open{background:var(--surface2);color:var(--text-2);border:1px solid var(--border)}
+.task-modal-done-btn:active{transform:scale(0.97)}
+.urgency-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:12px;font-weight:700}
+.urgency-1{background:rgba(217,48,37,.1);color:var(--red)}
+.urgency-2{background:rgba(242,153,0,.1);color:var(--yellow)}
+.urgency-3{background:rgba(26,115,232,.1);color:var(--accent)}
+.urgency-4{background:var(--surface2);color:var(--text-3)}
+
+/* ── TASK DETAIL SCREEN ── */
+#screen-task{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.task-detail-row{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--surface2)}
+.task-detail-row:last-child{border-bottom:none}
+.task-detail-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0;margin-top:1px}
+.task-detail-label{font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.task-detail-value{font-size:14px;font-weight:500;color:var(--text)}
+.urgency-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:12px;font-weight:700}
+.urgency-1{background:rgba(217,48,37,.1);color:var(--red)}
+.urgency-2{background:rgba(242,153,0,.1);color:var(--yellow)}
+.urgency-3{background:rgba(26,115,232,.1);color:var(--accent)}
+.urgency-4{background:var(--surface2);color:var(--text-3)}
+
+/* ── SUB-TOPBAR (back button bar) ── */
+.sub-topbar{display:flex;align-items:center;padding:10px 18px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px}
+
+/* ── LOGIN SLOGANS ── */
+.login-slogan1{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-0.3px}
+.login-slogan2{font-size:14px;color:var(--text-2);margin-bottom:36px;font-style:italic}
+
+/* ── SUB-TABS (תת-טאבים — משימות, תזרים, שיווק) ── */
+.sub-tabs{display:flex;gap:6px;padding:8px 16px 6px;background:white;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-shrink:0;}
+.sub-tabs::-webkit-scrollbar{display:none}
+.sub-tab{padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;white-space:nowrap;flex-shrink:0;border:1.5px solid var(--border);background:white;color:var(--text-2);transition:all .15s;}
+.sub-tab.active{border-color:var(--accent);background:rgba(26,115,232,.08);color:var(--accent);}
+.sub-tab:hover:not(.active){background:var(--surface2);}
+.cash-sub-tab{padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;white-space:nowrap;flex-shrink:0;border:1.5px solid var(--border);background:white;color:var(--text-2);transition:all .15s;}
+.cash-sub-tab.active{border-color:var(--accent);background:rgba(26,115,232,.08);color:var(--accent);}
+.cash-sub-tab:hover:not(.active){background:var(--surface2);}
+
+/* ── WAITING FOR ── */
+.task-waiting{font-size:12px;font-weight:600;color:#d97706;margin-bottom:2px;}
+
+</style>
+<script>
+  const CONFIG = {
+    CLIENT_ID: "518703257492-a688jf72mjbfo59sorejdj0u14b2pho0.apps.googleusercontent.com",
+    SCOPES: "https://www.googleapis.com/auth/drive.file"
+  };
+</script>
+</head>
+<body>
+<div id="app">
+
+  <!-- ════ LOGIN ════ -->
+  <div id="screen-login" style="display:flex;">
+    <div class="login-logo">✦</div>
+    <div class="login-title">InboxHQ</div>
+    <div style="font-size:12px;color:var(--text-3);margin-top:-4px;margin-bottom:10px;font-weight:400;letter-spacing:0.2px;">by Claudius Sapio Tech Solutions</div>
+    <div class="login-slogan1">Inbox in. Business out.</div>
+    <div class="login-slogan2">Your business HQ, inside Gmail</div>
+    <div class="error-banner" id="error-banner"></div>
+    <button class="btn-google" onclick="handleLogin()">
+      <svg viewBox="0 0 24 24">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      כניסה עם Google
+    </button>
+    <div class="setup-hint" id="setup-hint">
+      ⚠️ נדרש הגדרה חד-פעמית:<br>
+      פתח את הקובץ <code>index.html</code> ושנה את ה-CLIENT_ID<br>
+      <a href="https://console.cloud.google.com/apis/credentials" target="_blank">צור Client ID כאן ←</a>
+    </div>
+  </div>
+
+  <!-- ════ LOADING ════ -->
+  <div id="screen-loading" style="display:none;flex:1;flex-direction:column;">
+    <div class="loading">
+      <div class="spinner"></div>
+      <span id="loading-text">טוען...</span>
+    </div>
+  </div>
+
+  <!-- ════ APP SHELL (topbar + tabs + screens) ════ -->
+  <div id="screen-app" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+
+    <!-- ── Topbar קבוע בכל המסכים ── -->
+    <div class="topbar">
+      <div class="avatar" id="avatar-btn" onclick="handleLogout()" style="margin-left:10px;"></div>
+      <div class="topbar-brand">
+        <span class="topbar-title">InboxHQ</span>
+        <span class="topbar-slogan">Turns your inbox into a business engine</span>
+      </div>
+      <div style="flex:1;"></div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button class="topbar-icon-btn" id="btn-refresh" onclick="refreshData()" title="רענן">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M13.5 8a5.5 5.5 0 11-1.1-3.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><polyline points="10,2.5 12.5,2.5 12.5,5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── ניווט ראשי (מוצג רק במסך הראשי) ── -->
+    <div class="tabs" id="main-tabs">
+      <button class="tab active" onclick="switchTab('tasks',this)">משימות</button>
+      <button class="tab" onclick="switchTab('leads',this)">פרויקטים</button>
+      <button class="tab" onclick="switchTab('projects',this)">לידים</button>
+      <button class="tab" onclick="switchTab('team',this)">צוות</button>
+      <button class="tab" onclick="switchTab('marketing',this)">שיווק</button>
+      <button class="tab" onclick="switchTab('cashflow',this)">תזרים</button>
+    </div>
+
+    <!-- ── תוכן ── -->
+    <div id="screen-main" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+      <div id="sub-tabs-bar" style="flex-shrink:0;"></div>
+      <div class="content" id="content"></div>
+    </div>
+
+    <!-- ── מסך פרטי משימה ── -->
+    <div id="screen-task" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+      <div class="sub-topbar">
+        <div class="detail-title" id="task-screen-title">משימה</div>
+      </div>
+      <div class="detail-content" id="task-screen-body" style="padding:12px;"></div>
+    </div>
+
+    <!-- ── מסך פרטי פרויקט ── -->
+    <div id="screen-detail" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+      <div class="sub-topbar">
+        <div class="detail-title" id="detail-project-title">פרויקט</div>
+      </div>
+      <div class="detail-tabs">
+        <button class="detail-tab active" onclick="switchDetailTab('main',this)">ראשי</button>
+        <button class="detail-tab" onclick="switchDetailTab('tasks',this)">משימות</button>
+        <button class="detail-tab" onclick="switchDetailTab('milestones',this)">אבני דרך</button>
+        <button class="detail-tab" onclick="switchDetailTab('team',this)">צוות</button>
+        <button class="detail-tab" onclick="switchDetailTab('money',this)">כסף</button>
+        <button class="detail-tab" onclick="switchDetailTab('files',this)">קבצים</button>
+      </div>
+      <div class="detail-content" id="detail-content"></div>
+    </div>
+
+  </div><!-- /screen-app -->
+
+</div>
+
+<div class="snackbar" id="snackbar"></div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ============================================================
+//  app.js — InboxHQ PWA
+//  מחולק לקטעים:
+//  1. STATE
+//  2. AUTH
+//  3. DRIVE API
+//  4. LOAD DATA
+//  5. RENDER MAIN
+//  6. RENDER PROJECTS
+//  7. PROJECT DETAIL
+//  8. TASK DETAIL MODAL  ← חדש
+//  9. ACTIONS
+//  10. UI HELPERS
+// ============================================================
+
+// ── 1. STATE ──────────────────────────────────────────────
+let state = {
+  token: null,
+  user: null,
+  tasks: [],
+  folders: [],
+  systemFolderId: null,
+  tasksFileId: null,
+  foldersFileId: null,
+  currentTab: 'tasks',
+  currentProject: null,
+  currentDetailTab: 'main',
+  currentTask: null,
+  saving: false,
+  pinnedTaskIds:  [],   // נעצים אדומים
+  pinnedGreenIds: [],   // נעצים ירוקים
+};
+
+async function _loadPins() {
+  if (!state.systemFolderId) return;
+  try {
+    // נעצים אדומים — pinned-tasks.json
+    const q1 = encodeURIComponent(`'${state.systemFolderId}' in parents and name='pinned-tasks.json' and trashed=false`);
+    const r1  = await driveGet('files?q=' + q1 + '&fields=files(id)&pageSize=1');
+    if (r1.files?.length) {
+      const d = await driveGetFile(r1.files[0].id);
+      state.pinnedTaskIds = d.ids || [];
+    }
+    // נעצים ירוקים — pinned-by-type.json (כולל את כל ה-IDs מכל הסוגים)
+    const q2 = encodeURIComponent(`'${state.systemFolderId}' in parents and name='pinned-by-type.json' and trashed=false`);
+    const r2  = await driveGet('files?q=' + q2 + '&fields=files(id)&pageSize=1');
+    if (r2.files?.length) {
+      const d2 = await driveGetFile(r2.files[0].id);
+      // byType: { general: [id, id], payment: [id] } — שטח ל-Set אחד
+      const byType = d2.byType || {};
+      state.pinnedGreenIds = Object.values(byType).flat();
+    }
+    // רנדר מחדש עם נעצים
+    if (state.currentTab === 'tasks') renderContent();
+  } catch(e) {
+    console.warn('_loadPins:', e);
+  }
+}
+
+// ── 2. AUTH ───────────────────────────────────────────────
+window.addEventListener('load', () => {
+  if (CONFIG.CLIENT_ID === 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com') {
+    document.getElementById('setup-hint').style.display = 'block';
+    return;
+  }
+  // ── בדיקת scope: אם הטוקן הישן הונפק עם drive.file — כפה login מחדש ──
+  const savedScope = localStorage.getItem('pa_scope');
+  if (savedScope !== 'drive.file.sameclient') {
+    localStorage.removeItem('pa_token');
+    localStorage.removeItem('pa_token_expiry');
+    localStorage.setItem('pa_scope', 'drive.file.sameclient');
+    console.log('[Auth] Scope upgraded to drive — forcing re-login');
+  }
+
+  const saved = localStorage.getItem('pa_token');
+  const expiry = parseInt(localStorage.getItem('pa_token_expiry') || '0');
+  // טוקן תקף — כנס ישירות ללא כניסה מחדש
+  if (saved && expiry > Date.now() + 60000) {
+    state.token = saved;
+    showMain();
+    loadData();
+  } else if (saved && expiry <= Date.now() + 60000) {
+    // טוקן פג — נסה לרענן בשקט
+    _silentRefresh();
+  }
+});
+
+function _silentRefresh() {
+  try {
+    google.accounts.oauth2.initTokenClient({
+      client_id: CONFIG.CLIENT_ID,
+      scope: CONFIG.SCOPES + ' https://www.googleapis.com/auth/userinfo.profile',
+      prompt: '',
+      callback: async (r) => {
+        if (r.error || !r.access_token) {
+          showScreen('login');
+          return;
+        }
+        state.token = r.access_token;
+        const expiry = Date.now() + ((r.expires_in || 3600) * 1000);
+        localStorage.setItem('pa_token', state.token);
+        localStorage.setItem('pa_token_expiry', String(expiry));
+        localStorage.setItem('pa_scope', 'drive.file.sameclient');
+        showMain();
+        await loadData();
+      }
+    }).requestAccessToken();
+  } catch(e) {
+    showScreen('login');
+  }
+}
+
+function handleLogin() {
+  if (CONFIG.CLIENT_ID === 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com') {
+    showError('יש להגדיר Client ID');
+    document.getElementById('setup-hint').style.display = 'block';
+    return;
+  }
+  // מובייל: ייתכן popup נחסם — הצג הודעה אם נכשל
+  try {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: CONFIG.CLIENT_ID,
+      scope: CONFIG.SCOPES + ' https://www.googleapis.com/auth/userinfo.profile',
+      callback: async (r) => {
+        if (r.error) {
+          showError('שגיאה: ' + r.error);
+          // אם popup נחסם במובייל — הצג הנחייה
+          if (r.error === 'popup_closed_by_user' || r.error === 'popup_blocked') {
+            showError('חלון הכניסה נחסם. נסה לאפשר popups לאתר זה בהגדרות הדפדפן.');
+          }
+          return;
+        }
+        state.token = r.access_token;
+        const expiry = Date.now() + ((r.expires_in || 3600) * 1000);
+        localStorage.setItem('pa_token', state.token);
+        localStorage.setItem('pa_token_expiry', String(expiry));
+        localStorage.setItem('pa_scope', 'drive.file.sameclient');
+        showMain();
+        await loadData();
+      },
+      error_callback: (err) => {
+        if (err.type === 'popup_closed') {
+          showError('חלון הכניסה נסגר. לחץ שוב על כניסה.');
+        } else if (err.type === 'popup_failed_to_open') {
+          showError('לא ניתן לפתוח חלון כניסה. אפשר popups עבור אתר זה בדפדפן ונסה שוב.');
+        } else {
+          showError('שגיאת כניסה: ' + (err.type || 'לא ידוע'));
+        }
+      }
+    });
+    client.requestAccessToken();
+  } catch(e) {
+    showError('שגיאה: ' + e.message);
+  }
+}
+
+function handleLogout() {
+  if (!confirm('להתנתק?')) return;
+  localStorage.removeItem('pa_token'); localStorage.removeItem('pa_token_expiry');
+  state = { token:null, user:null, tasks:[], folders:[], systemFolderId:null, tasksFileId:null, foldersFileId:null, currentTab:'tasks', currentProject:null, currentDetailTab:'main', currentTask:null, saving:false };
+  showScreen('login');
+}
+
+// ── 3. DRIVE API ──────────────────────────────────────────
+async function driveGet(url) {
+  const r = await fetch('https://www.googleapis.com/drive/v3/' + url, {
+    headers: { Authorization: 'Bearer ' + state.token }
+  });
+  if (r.status === 401) { handleLogout(); throw new Error('פג תוקף'); }
+  return r.json();
+}
+
+async function driveGetFile(id) {
+  const r = await fetch('https://www.googleapis.com/drive/v3/files/' + id + '?alt=media', {
+    headers: { Authorization: 'Bearer ' + state.token }
+  });
+  if (!r.ok) throw new Error('שגיאת קריאה');
+  return r.json();
+}
+
+async function drivePatch(id, data) {
+  const r = await fetch('https://www.googleapis.com/upload/drive/v3/files/' + id + '?uploadType=media', {
+    method: 'PATCH',
+    headers: { Authorization: 'Bearer ' + state.token, 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('שגיאת שמירה');
+  return r.json();
+}
+
+// ── 4. LOAD DATA ──────────────────────────────────────────
+async function loadData() {
+  showScreen('loading');
+  setLoadingText('מחפש נתונים...');
+  try {
+    // ── מצא תיקיית _system (בתוך smartFolders) ──
+    // תחילה מצא את תיקיית smartFolders, ואז חפש _system בתוכה
+    const s0 = encodeURIComponent("name='smartFolders' and mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false");
+    const sfRoot = await driveGet('files?q=' + s0 + '&fields=files(id,name)&spaces=drive&pageSize=1');
+    console.log('[LoadData] smartFolders root search:', JSON.stringify(sfRoot));
+
+    let smartFoldersRootId = sfRoot.files?.[0]?.id || null;
+
+    // אם לא נמצא עם root — נסה ללא הגבלת parent (fallback)
+    if (!smartFoldersRootId) {
+      const s0b = encodeURIComponent("name='smartFolders' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+      const sfRoot2 = await driveGet('files?q=' + s0b + '&fields=files(id,name)&spaces=drive&pageSize=5');
+      console.log('[LoadData] smartFolders fallback search:', JSON.stringify(sfRoot2));
+      smartFoldersRootId = sfRoot2.files?.[0]?.id || null;
+    }
+    console.log('[LoadData] smartFoldersRootId:', smartFoldersRootId);
+
+    // מצא _system בתוך smartFolders
+    if (smartFoldersRootId) {
+      const s1 = encodeURIComponent("'" + smartFoldersRootId + "' in parents and name='_system' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+      const sf = await driveGet('files?q=' + s1 + '&fields=files(id,name)&spaces=drive&pageSize=1');
+      console.log('[LoadData] _system search:', JSON.stringify(sf));
+      if (sf.files?.length) state.systemFolderId = sf.files[0].id;
+    }
+
+    // fallback: חפש _system בכל מקום
+    if (!state.systemFolderId) {
+      const s1b = encodeURIComponent("name='_system' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+      const sfb = await driveGet('files?q=' + s1b + '&fields=files(id,name)&spaces=drive&pageSize=1');
+      console.log('[LoadData] _system fallback search:', JSON.stringify(sfb));
+      if (sfb.files?.length) state.systemFolderId = sfb.files[0].id;
+    }
+    console.log('[LoadData] systemFolderId:', state.systemFolderId);
+
+    // tasks.json
+    if (state.systemFolderId) {
+      setLoadingText('טוען משימות...');
+      const s2 = encodeURIComponent("'" + state.systemFolderId + "' in parents and name='tasks.json' and trashed=false");
+      const tf = await driveGet('files?q=' + s2 + '&fields=files(id)&spaces=drive&pageSize=1');
+      console.log('[LoadData] tasks.json search:', JSON.stringify(tf));
+      if (tf.files?.length) {
+        state.tasksFileId = tf.files[0].id;
+        const td = await driveGetFile(state.tasksFileId);
+        state.tasks = td.tasks || [];
+        console.log('[LoadData] tasks loaded:', state.tasks.length);
+      }
+    }
+
+    // smartFolders/index.json
+    setLoadingText('טוען פרויקטים...');
+    if (smartFoldersRootId) {
+      const s4 = encodeURIComponent("'" + smartFoldersRootId + "' in parents and name='index.json' and trashed=false");
+      const idxF = await driveGet('files?q=' + s4 + '&fields=files(id,name)&spaces=drive&pageSize=1');
+      console.log('[LoadData] index.json search:', JSON.stringify(idxF));
+      if (idxF.files?.length) {
+        state.foldersFileId = idxF.files[0].id;
+        const pd = await driveGetFile(state.foldersFileId);
+        console.log('[LoadData] index.json raw keys:', Object.keys(pd || {}));
+        const raw = Array.isArray(pd) ? pd : (pd.smartFolders || pd.folders || []);
+        state.folders = raw.filter(f => !f.archived);
+        console.log('[LoadData] folders loaded:', state.folders.length, state.folders.map(f=>f.name));
+      }
+    }
+
+    // פרטי משתמש
+    try {
+      const me = await fetch('https://www.googleapis.com/oauth2/v1/userinfo', {
+        headers: { Authorization: 'Bearer ' + state.token }
+      }).then(r => r.json());
+      state.user = me;
+      const avatarEl = document.getElementById('avatar-btn');
+      // תמיד אינישיאלים — ללא תמונה
+      avatarEl.textContent = (me.name || me.email || 'U').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    } catch(e) {}
+
+    showScreen('main');
+    renderContent();
+    // טען נעצים ברקע
+    _loadPins().catch(() => {});
+  } catch(err) {
+    console.error(err);
+    showScreen('main');
+    showSnack('שגיאה: ' + err.message);
+    renderContent();
+  }
+}
+
+async function refreshData() {
+  state.tasks = []; state.folders = [];
+  state.systemFolderId = null; state.tasksFileId = null; state.foldersFileId = null;
+  await loadData();
+}
+
+// ── 5. RENDER MAIN ────────────────────────────────────────
+function renderContent() {
+  const c = document.getElementById('content');
+  updateTopbar();
+  switch (state.currentTab) {
+    case 'tasks':    renderTasks(c, state.tasks.filter(t => t.status === 'open')); break;
+    case 'leads':    _setSubTabsBar(''); renderLeads(c); break;
+    case 'projects': _setSubTabsBar(''); renderProjects(c); break;
+    case 'team':     _setSubTabsBar(''); renderTeamView(c); break;
+    case 'marketing': renderMarketing(c); break;
+    case 'cashflow':  renderCashflow(c); break;
+    default:         renderTasks(c, state.tasks.filter(t => t.status === 'open')); break;
+  }
+}
+
+function updateTopbar() {
+  // אין כותרת משנה — הסלוגן מוגדר ב-HTML
+}
+
+function renderStats() {
+  const o = state.tasks.filter(t => t.status === 'open').length;
+  const u = state.tasks.filter(t => t.status === 'open' && t.urgency === 1).length;
+  const d = state.tasks.filter(t => t.status === 'done').length;
+  return '<div class="stats-row">'
+    + '<div class="stat-card"><div class="stat-num" style="color:var(--accent)">' + o + '</div><div class="stat-label">פתוחות</div></div>'
+    + '<div class="stat-card"><div class="stat-num" style="color:var(--red)">' + u + '</div><div class="stat-label">דחופות</div></div>'
+    + '<div class="stat-card"><div class="stat-num" style="color:var(--green)">' + d + '</div><div class="stat-label">הושלמו</div></div>'
+    + '</div>';
+}
+
+// ── עוזר: מציב תת-טאבים ב-bar הקבוע ──────────────────────
+function _setSubTabsBar(html) {
+  var bar = document.getElementById('sub-tabs-bar');
+  if (bar) bar.innerHTML = html || '';
+}
+
+function renderTasks(container, tasks) {
+  const sub = state.taskSubTab || 'todo';
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // ── תפריט משנה → ל-bar הקבוע ──
+  const subTabs = [
+    { id:'today',   label:'היום' },
+    { id:'todo',    label:'משימות' },
+    { id:'urgent',  label:'דחופות' },
+    { id:'dated',   label:'עם תאריך' },
+    { id:'someday', label:'מתישהו' },
+    { id:'notes',   label:'פתקיות' },
+  ];
+  _setSubTabsBar('<div style="display:flex;align-items:center;padding:6px 8px;background:white;border-bottom:1px solid var(--border);gap:3px;">'
+    + subTabs.map(function(t) {
+        var active = sub === t.id;
+        return '<button class="sub-tab' + (active ? ' active' : '') + '" onclick="state.taskSubTab=\''+t.id+'\';renderContent()" '
+          + 'style="flex:1;min-width:0;padding:4px 1px;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
+          + t.label + '</button>';
+      }).join('')
+    + '<button onclick="openNewTaskModal()" title="משימה חדשה" '
+    + 'style="width:28px;height:28px;min-width:28px;border-radius:50%;background:var(--accent);border:none;'
+    + 'color:white;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;'
+    + 'box-shadow:0 2px 6px rgba(26,115,232,.35);flex-shrink:0;margin-right:2px;font-weight:300;transition:transform .15s;" '
+    + 'onmousedown="this.style.transform=\'scale(0.9)\'" onmouseup="this.style.transform=\'scale(1)\'">'
+    + '+</button>'
+    + '</div>');
+
+  // פתקיות — תצוגה נפרדת
+  if (sub === 'notes') {
+    _renderStandaloneNotes(container);
+    return;
+  }
+
+  // ── סינון ──
+  let filtered;
+  if (sub === 'today') {
+    filtered = tasks.filter(function(t) {
+      if (!t.dueDate || !t.alertBeforeDays) return false;
+      var due = new Date(t.dueDate); due.setHours(0,0,0,0);
+      var alertStart = new Date(due); alertStart.setDate(alertStart.getDate() - t.alertBeforeDays);
+      return today >= alertStart && today <= due;
+    });
+  } else if (sub === 'urgent') {
+    filtered = tasks.filter(function(t) { return t.urgency === 1 || t.urgency === 2; });
+  } else if (sub === 'dated') {
+    filtered = tasks.filter(function(t) { return !!t.dueDate; });
+  } else if (sub === 'someday') {
+    filtered = tasks.filter(function(t) { return !t.dueDate && (!t.urgency || t.urgency >= 4); });
+  } else {
+    filtered = tasks.filter(function(t) { return t.dueDate || (t.urgency && t.urgency < 4); });
+  }
+
+  // empty
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">✓</div><div class="empty-title">אין משימות</div></div>';
+    return;
+  }
+
+  // ── מיון: נעצים → דחיפות → תאריך ──
+  const pinnedRed   = new Set(state.pinnedTaskIds   || []);
+  const pinnedGreen = new Set(state.pinnedGreenIds  || []);
+
+  const sorted = [...filtered].sort((a, b) => {
+    const ar = pinnedRed.has(a.id) ? 0 : pinnedGreen.has(a.id) ? 1 : 2;
+    const br = pinnedRed.has(b.id) ? 0 : pinnedGreen.has(b.id) ? 1 : 2;
+    if (ar !== br) return ar - br;
+    const ua = a.urgency || 5, ub = b.urgency || 5;
+    if (ua !== ub) return ua - ub;
+    if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
+    if (a.dueDate) return -1; if (b.dueDate) return 1; return 0;
+  });
+
+  container.innerHTML =
+    '<div class="task-list">' +
+    sorted.map((t, i) => taskCardHtml(t, true, i + 1)).join('') +
+    '</div>';
+}
+
+// ── פתקיות עצמאיות ──────────────────────────────────────
+async function _renderStandaloneNotes(container) {
+  container.innerHTML = '<div style="padding:16px;"><div class="spinner" style="margin:30px auto;"></div></div>';
+  try {
+    var notes = [];
+    if (state.systemFolderId) {
+      var q = encodeURIComponent("'" + state.systemFolderId + "' in parents and name='notes.json' and trashed=false");
+      var res = await driveGet('files?q=' + q + '&fields=files(id)&pageSize=1');
+      if (res.files && res.files.length) {
+        var data = await driveGetFile(res.files[0].id);
+        notes = (data.notes || []).filter(function(n) { return !n.archived && !n.projectId && !n.taskId; });
+      }
+    }
+    if (!notes.length) {
+      container.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">אין פתקיות</div><div class="empty-sub">פתקיות ללא פרויקט ומשימה יופיעו כאן</div></div>';
+      return;
+    }
+    var rows = notes.map(function(n) {
+      var date = n.createdAt ? new Date(n.createdAt).toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit'}) : '';
+      return '<div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:8px;border-right:3px solid var(--yellow);box-shadow:0 1px 3px rgba(0,0,0,.04);">'
+        + '<div style="font-size:14px;line-height:1.6;white-space:pre-wrap;">' + esc(n.text || '') + '</div>'
+        + (date ? '<div style="font-size:11px;color:var(--text-3);margin-top:6px;">' + date + '</div>' : '')
+      + '</div>';
+    }).join('');
+    container.innerHTML = '<div style="padding:16px;">' + rows + '</div>';
+  } catch(e) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">שגיאה בטעינת פתקיות</div></div>';
+  }
+}
+
+// ── SVG CONSTANTS ─────────────────────────────────────────
+const _CLIP_SVG   = '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;color:#9ca3af;"><path d="M13.5 7.5L7.5 13.5a4 4 0 01-5.657-5.657l6-6a2.5 2.5 0 013.535 3.535L5.5 11.25a1 1 0 01-1.414-1.414L10 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+const _STICKY_SVG = '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="10" height="13" rx="1.5" fill="#fef9c3" stroke="#d97706" stroke-width="1.3"/><path d="M11.5 10.5L14 8v5.5a1 1 0 01-1 1H11.5v-4z" fill="#d97706" opacity="0.7"/><line x1="4" y1="5.5" x2="9" y2="5.5" stroke="#d97706" stroke-width="1.1" stroke-linecap="round"/><line x1="4" y1="8" x2="9" y2="8" stroke="#d97706" stroke-width="1.1" stroke-linecap="round"/><line x1="4" y1="10.5" x2="7.5" y2="10.5" stroke="#d97706" stroke-width="1.1" stroke-linecap="round"/></svg>';
+const _FLAG_SVG   = '<svg width="12" height="13" viewBox="0 0 12 13" fill="none"><line x1="1.5" y1="0.5" x2="1.5" y2="12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1.5" y="0.5" width="4" height="3" fill="currentColor" rx="0.3"/><rect x="5.5" y="0.5" width="2" height="3" fill="white"/><rect x="5.5" y="2" width="4.5" height="1.5" fill="currentColor"/></svg>';
+const _FOLDER_SVG = '<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 4.5C2 3.67 2.67 3 3.5 3H6.5L8 5H12.5C13.33 5 14 5.67 14 6.5V11.5C14 12.33 13.33 13 12.5 13H3.5C2.67 13 2 12.33 2 11.5V4.5Z" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>';
+
+function _checkSvg(done) {
+  if (done) return '<svg class="task-check-svg" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" fill="#0f9d58"/><polyline points="5.5,11.5 9,15 16.5,7.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return '<svg class="task-check-svg" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9.5" stroke="#b0b8c1" stroke-width="1.5"/><polyline points="5.5,11.5 9,15 16.5,7.5" stroke="#b0b8c1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+
+function _taskBuildMenu(menuId, taskId) {
+  var toggleBtn = '<button class="task-menu-btn" data-menu="' + menuId + '" onclick="event.stopPropagation();_toggleTaskMenu(this.dataset.menu)">⋮</button>';
+  return toggleBtn
+    + '<div class="task-dropdown" id="' + menuId + '">'
+      + '<button class="task-dd-item" onclick="event.stopPropagation();_closeTaskMenus();">'
+          + '<svg viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>עריכה</button>'
+      + (taskId
+        ? '<button class="task-dd-item" data-tid="' + taskId + '" onclick="event.stopPropagation();_closeTaskMenus();toggleTask(this.dataset.tid)">'
+            + '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.3"/><polyline points="5,8.5 7,10.5 11,6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>סמן כבוצע</button>'
+        : '')
+      + '<button class="task-dd-item" onclick="event.stopPropagation();_closeTaskMenus();">'
+          + '<svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="8.5" height="11" rx="1.2" stroke="currentColor" stroke-width="1.3"/></svg>הוסף פתקית</button>'
+      + '<button class="task-dd-item" onclick="event.stopPropagation();_closeTaskMenus();">'
+          + '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r=".8" fill="currentColor"/><line x1="8" y1="1" x2="8" y2="3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="8" y1="13" x2="8" y2="15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="1" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="13" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>לטיפול היום</button>'
+      + '<div class="task-dd-sep"></div>'
+      + '<button class="task-dd-item danger" onclick="event.stopPropagation();_closeTaskMenus();">'
+          + '<svg viewBox="0 0 16 16" fill="none"><polyline points="3,4.5 13,4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6 4.5V3h4v1.5" stroke="currentColor" stroke-width="1.2"/><rect x="4" y="4.5" width="8" height="8.5" rx="1" stroke="currentColor" stroke-width="1.3"/><line x1="6.5" y1="7" x2="6.5" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="9.5" y1="7" x2="9.5" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>מחיקה</button>'
+    + '</div>';
+}
+
+function _toggleTaskMenu(id) {
+  var isOpen = document.getElementById(id)?.classList.contains('open');
+  _closeTaskMenus();
+  if (!isOpen) document.getElementById(id)?.classList.add('open');
+}
+function _closeTaskMenus() {
+  document.querySelectorAll('.task-dropdown.open').forEach(function(m){ m.classList.remove('open'); });
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.task-menu-btn') && !e.target.closest('.task-dropdown')) _closeTaskMenus();
+});
+
+// ── taskCardHtml — תצוגת רשימה ──────────────────────────
+function taskCardHtml(t, showProj, num) {
+  const done       = t.status === 'done';
+  const isRedPin   = (state.pinnedTaskIds  || []).includes(t.id);
+  const isGreenPin = (state.pinnedGreenIds || []).includes(t.id);
+
+  // ── נעץ ──
+  var pinHtml = '';
+  if (isRedPin)   pinHtml = '<span style="color:#d93025;font-size:13px;">📌</span>';
+  else if (isGreenPin) pinHtml = '<span style="font-size:13px;filter:hue-rotate(95deg) saturate(4) brightness(1.1);">📌</span>';
+
+  // ── תאריך ──
+  var dc = '';
+  if (t.dueDate) {
+    const due = new Date(t.dueDate); const today = new Date(); today.setHours(0,0,0,0);
+    const diff = Math.ceil((due - today) / 86400000);
+    var lbl, clr;
+    if      (diff < 0)  { lbl = 'איחור ' + Math.abs(diff) + ' ימים'; clr = '#dc2626'; }
+    else if (diff === 0){ lbl = 'להיום';  clr = '#dc2626'; }
+    else if (diff === 1){ lbl = 'למחר';   clr = 'var(--text)'; }
+    else                { lbl = 'נותרו ' + diff + ' ימים'; clr = 'var(--text)'; }
+    dc = '<span style="color:'+clr+';font-size:12px;font-weight:500;">'+lbl+'</span>';
+  }
+
+  // ── פרויקט ──
+  var pc = '';
+  if (showProj && t.linkedProject) {
+    const f2 = state.folders.find(function(f) { return f.id === t.linkedProject; });
+    if (f2) pc = '<span style="font-size:12px;color:var(--text-3);display:inline-flex;align-items:center;gap:3px;">'+_FOLDER_SVG+esc(f2.name)+'</span>';
+  }
+
+  // ── אבן דרך ──
+  var mc = t.linkedMilestone ? '<span style="font-size:12px;color:var(--text-3);display:inline-flex;align-items:center;gap:3px;">'+_FLAG_SVG+esc(t.linkedMilestone)+'</span>' : '';
+
+  // ── אחראי ──
+  var ac = '';
+  if (t.assignee) {
+    const aname = t.assignee.name || t.assignee.email || (typeof t.assignee === 'string' ? t.assignee : '');
+    if (aname) ac = '<span style="font-size:12px;color:var(--text-3);">'+esc(aname)+'</span>';
+  }
+
+  // ── שווי כספי ──
+  var amtc = (t.amount && t.amountDirection)
+    ? '<span style="font-size:12px;color:'+(t.amountDirection==='income'?'var(--green)':'var(--red)')+';">שווי: '+t.amount.toLocaleString()+' '+(t.amountDirection==='income'?'הכנסה':'הוצאה')+'</span>'
+    : '';
+
+  const sep = '<span style="color:var(--text-3);margin:0 3px;font-weight:300;">|</span>';
+  const metaParts = [dc, pc, mc, ac, amtc].filter(Boolean);
+  const metaHtml = metaParts.join(sep);
+
+  // ── פתקית ──
+  var stickyHtml = '';
+  if (t.stickyNote) {
+    const ds = t.stickyDate
+      ? ' — <span style="font-size:9.5px;color:var(--text-3);">' + new Date(t.stickyDate).toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'2-digit'}).replace(/\//g,'.') + '</span>'
+      : '';
+    stickyHtml = '<div class="task-sticky">'
+      + _STICKY_SVG
+      + '<span class="task-sticky-text">' + esc(t.stickyNote) + ds + '</span>'
+      + '</div>';
+  }
+
+  // ── קבצים מצורפים ──
+  var filesHtml = '';
+  var allFiles = t.linkedFiles || [];
+  if (allFiles.length) {
+    filesHtml = '<div style="display:flex;flex-direction:column;gap:2px;margin-top:3px;">'
+      + allFiles.map(function(file) {
+          var name = (file.name || '').replace(/\.[a-zA-Z0-9]{1,6}$/, '');
+          return '<div style="display:inline-flex;align-items:center;gap:4px;">' + _CLIP_SVG + '<span style="font-size:11px;color:var(--text-3);">' + esc(name) + '</span></div>';
+        }).join('')
+      + '</div>';
+  }
+
+  // ── ממתינה ל ──
+  var waitingHtml = t.waitingFor
+    ? '<div class="task-waiting">⏳ ממתינה ל: ' + esc(t.waitingFor) + '</div>'
+    : '';
+
+  // ── קבוצת משימות ──
+  var groupToggle = '';
+  var subtasksHtml = '';
+  const isGroup = t.type === 'group' || (t.isGroup && Array.isArray(t.subTasks) && t.subTasks.length);
+  if (isGroup && Array.isArray(t.subTasks) && t.subTasks.length) {
+    const total = t.subTasks.length;
+    const doneCount = t.subTasks.filter(function(s) { return s.done || s.status === 'done'; }).length;
+    const clr = doneCount === total ? 'var(--green)' : 'var(--text-2)';
+    const chevron = '<svg width="13" height="13" viewBox="0 0 13 13" style="display:inline-block;vertical-align:middle;transform:rotate(0deg);transition:transform .2s;" id="chev-'+t.id+'"><polyline points="3,2 10,6.5 3,11" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    groupToggle = ' <span data-id="'+t.id+'" onclick="event.stopPropagation();_toggleSubtasks(this.dataset.id)" style="cursor:pointer;color:var(--text-3);padding:0 2px;">'+chevron+'</span>'
+      + '<span style="font-size:11px;font-weight:600;color:'+clr+';">'+doneCount+'/'+total+'</span>';
+
+    subtasksHtml = '<div class="task-subtasks" id="subtasks-'+t.id+'" style="display:none;">'
+      + t.subTasks.map(function(s, si) {
+          const sdone = s.done || s.status === 'done';
+          var ssticky = '';
+          if (s.stickyNote) {
+            const ds2 = s.stickyDate ? ' — <span style="font-size:9.5px;color:var(--text-3);">'+new Date(s.stickyDate).toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'2-digit'}).replace(/\//g,'.')+'</span>' : '';
+            ssticky = '<div class="task-sticky" style="margin-right:14px;">'+_STICKY_SVG+'<span class="task-sticky-text">'+esc(s.content||'')+ds2+'</span></div>';
+          }
+          const smenuId = 'smenu-'+t.id+'-'+si;
+          return '<div style="padding:7px 14px 7px 24px;border-top:1px dashed var(--border);display:flex;align-items:flex-start;gap:5px;">'
+            + '<span class="subtask-num">'+(si+1)+'.</span>'
+            + '<div style="flex:1;">'
+              + '<div style="display:flex;align-items:center;gap:5px;">'
+                + '<span class="subtask-text '+(sdone?'done':'')+'">'+esc(s.content||'')+'</span>'
+                + (sdone ? '<span class="subtask-check">✓</span>' : '')
+              + '</div>' + ssticky
+            + '</div>'
+            + '<div style="position:relative;flex-shrink:0;">'+_taskBuildMenu(smenuId, null)+'</div>'
+          + '</div>';
+        }).join('')
+      + '</div>';
+  }
+
+  const menuId = 'menu-' + t.id;
+  const menuHtml = '<div style="position:relative;flex-shrink:0;">'+_taskBuildMenu(menuId, t.id)+'</div>';
+
+  return '<div class="task-row'+(done?' task-row-done':'')+'" id="task-'+t.id+'">'
+    + '<div class="task-row-main">'
+      + '<div class="task-row-body" onclick="openTaskDetail(\''+t.id+'\')">'
+        + '<div class="task-row-title'+(done?' done':'')+'">'+pinHtml+esc(t.content)+groupToggle+'</div>'
+        + waitingHtml
+        + stickyHtml
+        + (metaHtml ? '<div class="task-meta">' + metaHtml + '</div>' : '')
+        + filesHtml
+      + '</div>'
+      + menuHtml
+    + '</div>'
+    + subtasksHtml
+  + '</div>';
+}
+
+function _toggleSubtasks(id) {
+  const sub = document.getElementById('subtasks-'+id);
+  const chev = document.getElementById('chev-'+id);
+  if (!sub) return;
+  const open = sub.style.display !== 'none';
+  sub.style.display = open ? 'none' : 'block';
+  if (chev) chev.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+}
+
+
+
+
+// ── MARKETING VIEW ────────────────────────────────────────
+let _mktTab = 'networking';
+
+const _mktTabs = [
+  { id: 'networking', label: '🤝 נטוורקינג' },
+  { id: 'meetings',   label: '📅 פגישות'    },
+  { id: 'website',    label: '🌐 אתר'        },
+  { id: 'social',     label: '📱 רשתות'      },
+  { id: 'paid',       label: '💰 ממומן'      },
+  { id: 'budget',     label: '📊 תקציב'      },
+];
+
+function renderMarketing(container) {
+  _setSubTabsBar('<div class="sub-tabs" id="mkt-sub-tabs">'
+    + _mktTabs.map(t =>
+        '<button class="cash-sub-tab' + (_mktTab === t.id ? ' active' : '') + '" data-tab="' + t.id + '">' + t.label + '</button>'
+      ).join('')
+    + '</div>');
+
+  container.innerHTML = '<div id="mkt-body"></div>';
+
+  document.querySelectorAll('#mkt-sub-tabs .cash-sub-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _mktTab = btn.dataset.tab;
+      document.querySelectorAll('#mkt-sub-tabs .cash-sub-tab').forEach(b =>
+        b.classList.toggle('active', b.dataset.tab === _mktTab)
+      );
+      _renderMktBody(document.getElementById('mkt-body'));
+    });
+  });
+
+  _renderMktBody(document.getElementById('mkt-body'));
+}
+
+function _renderMktBody(body) {
+  const cfg = {
+    networking: { icon:'🤝', title:'נטוורקינג',  desc:'אנשי קשר חדשים, אירועים, הפניות' },
+    meetings:   { icon:'📅', title:'פגישות',      desc:'פגישות עם לקוחות ושותפים פוטנציאליים' },
+    website:    { icon:'🌐', title:'אתר',          desc:'תנועה, המרות, קמפיינים' },
+    social:     { icon:'📱', title:'רשתות חברתיות', desc:'פוסטים, עוקבים, אינטראקציות' },
+    paid:       { icon:'💰', title:'פרסום ממומן',  desc:'קמפיינים, עלות, החזר השקעה' },
+    budget:     { icon:'📊', title:'תקציב שיווק',  desc:'תכנון תקציב, ביצוע, יתרה' },
+  }[_mktTab];
+
+  body.innerHTML = '<div class="empty" style="padding-top:40px;">'
+    + '<div class="empty-icon">' + cfg.icon + '</div>'
+    + '<div class="empty-title">' + cfg.title + '</div>'
+    + '<div class="empty-sub">' + cfg.desc + '<br><span style="font-size:12px;color:var(--text-3);">בפיתוח — יהיה זמין בקרוב</span></div>'
+    + '</div>';
+}
+
+// ── CASHFLOW VIEW ─────────────────────────────────────────
+// ── CASHFLOW — מצב תת-טאב ────────────────────────────────
+let _cashTab = 'collection'; // 'collection' | 'flow' | 'byproject'
+
+function renderCashflow(container) {
+  _setSubTabsBar('<div class="sub-tabs" id="cash-sub-tabs">'
+    + _cashSubTab('collection', '📥 לגביה')
+    + _cashSubTab('flow',       '💸 תזרים')
+    + _cashSubTab('byproject',  '📂 לפי פרויקט')
+    + '</div>');
+
+  container.innerHTML = '<div id="cash-body"></div>';
+
+  document.querySelectorAll('#cash-sub-tabs .cash-sub-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _cashTab = btn.dataset.tab;
+      document.querySelectorAll('#cash-sub-tabs .cash-sub-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === _cashTab));
+      _renderCashBody(document.getElementById('cash-body'));
+    });
+  });
+
+  _renderCashBody(document.getElementById('cash-body'));
+}
+
+function _cashSubTab(id, label) {
+  return '<button class="cash-sub-tab' + (_cashTab === id ? ' active' : '') + '" data-tab="' + id + '">' + label + '</button>';
+}
+
+function _renderCashBody(body) {
+  if (_cashTab === 'collection') _renderCashCollection(body);
+  else if (_cashTab === 'flow')  _renderCashFlow(body);
+  else                           _renderCashByProject(body);
+}
+
+// ── תצוגה 1: לגביה ──────────────────────────────────────
+function _renderCashCollection(body) {
+  let totalIn = 0, receivedIn = 0;
+  const items = [];
+
+  state.folders.forEach(f => {
+    const money = f.moneyConfig || f.money;
+    if (!money) return;
+    const ti = calcIn(money), ri = calcRec(money);
+    totalIn    += ti;
+    receivedIn += ri;
+    const pending = ti - ri;
+    if (pending > 0) {
+      items.push({ name: f.name, total: ti, received: ri, pending, pct: Math.round(ri/ti*100) });
+    }
+  });
+
+  items.sort((a,b) => b.pending - a.pending);
+
+  const pending = totalIn - receivedIn;
+  const pct = totalIn > 0 ? Math.round(receivedIn / totalIn * 100) : 0;
+  const barCol = pct >= 80 ? 'var(--green)' : pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+
+  const rows = items.length ? items.map(p => {
+    const col = p.pct >= 80 ? 'var(--green)' : p.pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+    return '<div class="cash-row">'
+      + '<div style="flex:1;min-width:0;">'
+        + '<div class="cash-row-name">' + esc(p.name) + '</div>'
+        + '<div class="cash-row-sub">התקבל ₪' + p.received.toLocaleString() + ' מתוך ₪' + p.total.toLocaleString() + '</div>'
+      + '</div>'
+      + '<div style="text-align:left;flex-shrink:0;">'
+        + '<div style="font-size:14px;font-weight:700;color:var(--red);">₪' + p.pending.toLocaleString() + '</div>'
+        + '<div style="font-size:11px;color:' + col + ';">' + p.pct + '%</div>'
+      + '</div>'
+      + '</div>';
+  }).join('') : '<div style="padding:16px;font-size:13px;color:var(--text-3);text-align:center;">אין יתרות לגבייה 🎉</div>';
+
+  body.innerHTML =
+    '<div class="cash-cards">'
+      + _cashCard('ממתין לגבייה', '₪' + pending.toLocaleString(), pending > 0 ? 'var(--red)' : 'var(--green)')
+      + _cashCard('התקבל', '₪' + receivedIn.toLocaleString(), 'var(--green)')
+    + '</div>'
+    + '<div class="cash-progress-box">'
+      + '<div style="font-size:13px;color:var(--text-2);margin-bottom:8px;">אחוז גבייה כולל</div>'
+      + '<div class="cash-bar-track"><div class="cash-bar-fill" style="width:' + Math.min(100,pct) + '%;background:' + barCol + ';"></div></div>'
+      + '<div style="font-size:15px;font-weight:700;color:' + barCol + ';margin-top:6px;">' + pct + '%</div>'
+    + '</div>'
+    + '<div class="cash-section-title">פירוט לפי פרויקט</div>'
+    + '<div class="cash-list">' + rows + '</div>';
+}
+
+// ── תצוגה 2: תזרים ──────────────────────────────────────
+function _renderCashFlow(body) {
+  let totalIn = 0, receivedIn = 0, totalOut = 0, paidOut = 0;
+
+  state.folders.forEach(f => {
+    const money = f.moneyConfig || f.money;
+    if (!money) return;
+    totalIn    += calcIn(money);
+    receivedIn += calcRec(money);
+    if (money.expenses) money.expenses.forEach(e => {
+      totalOut += e.amount || 0;
+      if (e.paid) paidOut += e.amount || 0;
+    });
+  });
+
+  const netTotal    = totalIn - totalOut;
+  const netReceived = receivedIn - paidOut;
+  const netCol = netReceived >= 0 ? 'var(--green)' : 'var(--red)';
+
+  body.innerHTML =
+    '<div class="cash-cards">'
+      + _cashCard('הכנסות צפויות',  '₪' + totalIn.toLocaleString(),    'var(--accent)')
+      + _cashCard('הכנסות בפועל',   '₪' + receivedIn.toLocaleString(), 'var(--green)')
+      + _cashCard('הוצאות צפויות',  '₪' + totalOut.toLocaleString(),   'var(--text-2)')
+      + _cashCard('הוצאות בפועל',   '₪' + paidOut.toLocaleString(),    'var(--red)')
+    + '</div>'
+    + '<div class="cash-net-box">'
+      + '<div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">רווח נקי בפועל</div>'
+      + '<div style="font-size:28px;font-weight:900;color:' + netCol + ';">₪' + netReceived.toLocaleString() + '</div>'
+      + (netTotal !== netReceived
+        ? '<div style="font-size:12px;color:var(--text-3);margin-top:4px;">צפוי: ₪' + netTotal.toLocaleString() + '</div>'
+        : '')
+    + '</div>';
+}
+
+// ── תצוגה 3: לפי פרויקט ─────────────────────────────────
+function _renderCashByProject(body) {
+  const projects = state.folders
+    .map(f => {
+      const money = f.moneyConfig || f.money;
+      if (!money) return null;
+      const ti = calcIn(money), ri = calcRec(money);
+      const expenses = money.expenses ? money.expenses.reduce((s,e) => s + (e.amount||0), 0) : 0;
+      if (!ti && !expenses) return null;
+      return { name: f.name, id: f.id, total: ti, received: ri, expenses, pending: ti - ri, pct: ti > 0 ? Math.round(ri/ti*100) : 0 };
+    })
+    .filter(Boolean)
+    .sort((a,b) => b.total - a.total);
+
+  if (!projects.length) {
+    body.innerHTML = '<div class="empty"><div class="empty-icon">💰</div><div class="empty-title">אין נתוני תזרים</div></div>';
+    return;
+  }
+
+  const rows = projects.map(p => {
+    const col = p.pct >= 80 ? 'var(--green)' : p.pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+    return '<div class="cash-row">'
+      + '<div style="flex:1;min-width:0;">'
+        + '<div class="cash-row-name">' + esc(p.name) + '</div>'
+        + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">'
+          + (p.total   ? '<span class="cash-chip accent">↑ ₪' + p.total.toLocaleString()    + '</span>' : '')
+          + (p.received? '<span class="cash-chip green">✓ ₪' + p.received.toLocaleString()  + '</span>' : '')
+          + (p.expenses? '<span class="cash-chip red">↓ ₪'   + p.expenses.toLocaleString()  + '</span>' : '')
+        + '</div>'
+      + '</div>'
+      + (p.total > 0
+        ? '<div style="text-align:left;flex-shrink:0;">'
+            + '<div style="font-size:13px;font-weight:700;color:' + col + ';">' + p.pct + '%</div>'
+            + (p.pending > 0 ? '<div style="font-size:11px;color:var(--red);">₪' + p.pending.toLocaleString() + '</div>' : '')
+          + '</div>'
+        : '')
+      + '</div>';
+  }).join('');
+
+  body.innerHTML = '<div class="cash-list">' + rows + '</div>';
+}
+
+function _cashCard(label, value, color) {
+  return '<div class="cash-card">'
+    + '<div style="font-size:20px;font-weight:900;color:' + color + ';margin-bottom:3px;">' + value + '</div>'
+    + '<div style="font-size:11px;color:var(--text-2);">' + label + '</div>'
+    + '</div>';
+}
+
+// ── LEADS VIEW ────────────────────────────────────────────
+function renderLeads(container) {
+  // [DEBUG] מציג פרויקטים במקום לידים לצורך בדיקה
+  console.log('[DEBUG-Leads] state.folders:', state.folders.length, JSON.stringify(state.folders.map(f=>f.name)));
+
+  if (!state.folders || !state.folders.length) {
+    container.innerHTML = '<div class="empty">'
+      + '<div class="empty-icon">🔍</div>'
+      + '<div class="empty-title">אין פרויקטים ב-state</div>'
+      + '<div class="empty-sub" style="direction:ltr;font-size:12px;text-align:left;margin-top:12px;">'
+      + 'token: ' + (state.token ? state.token.slice(0,20)+'...' : 'null') + '<br>'
+      + 'systemFolderId: ' + (state.systemFolderId || 'null') + '<br>'
+      + 'foldersFileId: ' + (state.foldersFileId || 'null')
+      + '</div></div>';
+    return;
+  }
+
+  const rows = state.folders.map(f => {
+    const col = f.color || '#1a73e8';
+    return '<div style="background:white;border:1px solid var(--border);border-radius:var(--radius);'
+      + 'padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;"'
+      + ' onclick="openProject(\''+f.id+'\')">'
+      + '<div style="width:10px;height:10px;min-width:10px;border-radius:50%;background:' + col + ';"></div>'
+      + '<div style="flex:1;min-width:0;">'
+        + '<div style="font-size:15px;font-weight:700;color:var(--accent);">' + esc(f.name) + '</div>'
+        + (f.projectGroup ? '<div style="font-size:11px;color:var(--text-3);">📂 ' + esc(f.projectGroup) + '</div>' : '')
+      + '</div>'
+      + '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;color:var(--text-3);"><polyline points="6,3 11,8 6,13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      + '</div>';
+  }).join('');
+
+  container.innerHTML = '<div style="padding:4px 0 8px;">'
+    + '<div style="font-size:12px;color:var(--text-3);margin-bottom:10px;">🔍 מצב debug — מציג ' + state.folders.length + ' פרויקטים מה-state</div>'
+    + rows
+    + '</div>';
+}
+
+// ── TEAM VIEW ─────────────────────────────────────────────
+function renderTeamView(container) {
+  // ── קבץ משימות פתוחות לפי assignee ──
+  const byPerson = {};   // email → { name, email, tasks[] }
+
+  state.tasks
+    .filter(t => t.status === 'open' && t.assignee && (t.assignee.email || t.assignee.name))
+    .forEach(t => {
+      const email = t.assignee.email || ('__' + t.assignee.name);
+      const name  = t.assignee.name  || t.assignee.email || '?';
+      if (!byPerson[email]) byPerson[email] = { name, email: t.assignee.email || '', tasks: [] };
+      byPerson[email].tasks.push(t);
+    });
+
+  const people = Object.values(byPerson)
+    .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+
+  if (!people.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">👥</div>'
+      + '<div class="empty-title">אין משימות משויכות</div>'
+      + '<div class="empty-sub">משימות שיוקצו לאנשי צוות יופיעו כאן</div></div>';
+    return;
+  }
+
+  const AVATAR_COLORS = ['#1a73e8','#0f9d58','#7c4dff','#f29900','#d93025','#00bcd4','#e91e63','#009688'];
+
+  const html = people.map(person => {
+    const col    = AVATAR_COLORS[(person.email || person.name).charCodeAt(0) % AVATAR_COLORS.length];
+    const initials = person.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    const open   = person.tasks.length;
+    const urgent = person.tasks.filter(t => t.urgency === 1).length;
+
+    // מיין משימות: דחוף ראשון
+    const sorted = [...person.tasks].sort((a, b) => (a.urgency||4) - (b.urgency||4));
+
+    const taskRows = sorted.map((t, i) => taskCardHtml(t, true, i + 1)).join('');
+
+    return '<div class="team-person-block">'
+      // ── כותרת אדם ──
+      + '<div class="team-person-header" onclick="this.nextElementSibling.classList.toggle(\'collapsed\')">'
+        + '<div class="team-avatar" style="background:' + col + '">' + initials + '</div>'
+        + '<div class="team-person-info">'
+          + '<div class="team-person-name">' + esc(person.name) + '</div>'
+          + (person.email ? '<div class="team-person-email">' + esc(person.email) + '</div>' : '')
+        + '</div>'
+        + '<div class="team-person-stats">'
+          + '<span class="team-stat-badge">' + open + ' משימות</span>'
+          + (urgent ? '<span class="team-stat-badge urgent">' + urgent + ' דחופות</span>' : '')
+        + '</div>'
+        + '<span class="team-chevron">▾</span>'
+      + '</div>'
+      // ── רשימת משימות ──
+      + '<div class="team-person-tasks">'
+        + '<div class="task-list">' + taskRows + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  const totalAssigned = people.reduce((s, p) => s + p.tasks.length, 0);
+
+  container.innerHTML =
+    '<div class="team-summary">'
+      + '<span>' + people.length + ' אנשי צוות</span>'
+      + '<span>' + totalAssigned + ' משימות משויכות</span>'
+    + '</div>'
+    + html;
+
+  // bind קבוצות (subtasks toggle)
+  container.querySelectorAll('[data-subtask-toggle]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      _toggleSubtasks(btn.dataset.subtaskToggle);
+    });
+  });
+}
+
+// ── 6. RENDER PROJECTS ────────────────────────────────────
+function renderProjects(container) {
+  if (!state.folders.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">📂</div><div class="empty-title">אין פרויקטים</div><div class="empty-sub">פתח את התוסף ב-Gmail כדי ליצור פרויקטים</div></div>';
+    return;
+  }
+  container.innerHTML =
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
+    + '<input id="pv-search" placeholder="🔍 חיפוש פרויקט..." style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:14px;color:var(--text);font-family:var(--sans);" oninput="filterProjects(this.value)">'
+    + '<span id="pv-count" style="font-size:12px;color:var(--text-3);white-space:nowrap;">' + state.folders.length + ' פרויקטים</span>'
+    + '</div>'
+    + '<div id="pv-list">' + _buildProjectRows(state.folders) + '</div>';
+}
+
+function _buildProjectRows(folders) {
+  const COLORS = ['#1a73e8','#0f9d58','#7c4dff','#f29900','#d93025','#00bcd4','#e91e63'];
+  const byProj = {};
+  state.tasks.forEach(t => {
+    if (t.linkedProject) {
+      if (!byProj[t.linkedProject]) byProj[t.linkedProject] = { open:0, done:0 };
+      if (t.status === 'open') byProj[t.linkedProject].open++;
+      else if (t.status === 'done') byProj[t.linkedProject].done++;
+    }
+  });
+
+  return folders.map((f, i) => {
+    const col = f.color || COLORS[i % COLORS.length];
+    const st = byProj[f.id] || { open:0, done:0 };
+    const tot = st.open + st.done;
+    const pct = tot > 0 ? Math.round(st.done / tot * 100) : 0;
+    const ms = (f.milestoneObjects || f.milestones || []).length;
+    const contacts = getContacts(f);
+
+    return '<div class="pv-row" id="pvr-' + f.id + '">'
+      // שורה ראשית
+      + '<div style="display:flex;align-items:center;gap:0;padding:12px 14px;" onclick="togglePvExpand(\'' + f.id + '\')">'
+        + '<div style="width:10px;height:10px;min-width:10px;border-radius:50%;background:' + col + ';margin-left:10px;"></div>'
+        + '<div style="flex:1;min-width:0;" onclick="event.stopPropagation();openProject(\'' + f.id + '\')">'
+          + '<div style="font-size:15px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(f.name) + '</div>'
+          + (f.projectGroup || f.group ? '<div style="font-size:11px;color:var(--text-2);margin-top:1px;">📂 ' + esc(f.projectGroup || f.group) + '</div>' : '')
+        + '</div>'
+        + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;margin-right:8px;">'
+          + (st.open > 0 ? '<span style="font-size:12px;color:var(--accent);font-weight:700;">✅ ' + st.open + '</span>' : '')
+          + (contacts.length > 0 ? '<span style="font-size:12px;color:var(--text-2);">👥 ' + contacts.length + '</span>' : '')
+          + (ms > 0 ? '<span style="font-size:12px;color:var(--text-2);">🏁 ' + ms + '</span>' : '')
+        + '</div>'
+        + '<span id="pvarrow-' + f.id + '" style="color:var(--text-3);font-size:12px;transition:transform .2s;">▶</span>'
+      + '</div>'
+      // סרגל התקדמות
+      + (tot > 0 ? '<div style="height:3px;background:var(--surface2);"><div style="height:100%;width:' + pct + '%;background:' + col + ';"></div></div>' : '')
+      // פרטים מורחבים
+      + '<div id="pvd-' + f.id + '" style="display:none;border-top:1px solid var(--border);">'
+        + _buildProjectExpandDetails(f, st, contacts)
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+function _buildProjectExpandDetails(f, st, contacts) {
+  const ms = getMilestones(f);
+  const openTasks = state.tasks.filter(t => t.linkedProject === f.id && t.status === 'open');
+  let html = '';
+
+  // אנשי קשר
+  if (contacts.length) {
+    html += '<div style="padding:10px 14px;border-bottom:1px solid var(--border);">'
+      + '<div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">👥 אנשי קשר</div>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:6px;">'
+      + contacts.slice(0, 6).map(c => {
+          const COLS = ['#1a73e8','#0f9d58','#7c4dff','#f29900','#d93025'];
+          const bg = COLS[(c.email || '').charCodeAt(0) % COLS.length];
+          const init = (c.name || c.email || '?')[0].toUpperCase();
+          return '<div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">'
+            + '<div style="width:22px;height:22px;min-width:22px;border-radius:50%;background:' + bg + ';display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;">' + init + '</div>'
+            + '<div><div style="font-size:13px;font-weight:600;">' + esc(c.name || c.email) + '</div>'
+            + (c.role ? '<div style="font-size:10px;color:var(--accent);">' + esc(c.role) + '</div>' : '')
+            + '</div></div>';
+        }).join('')
+      + '</div></div>';
+  }
+
+  // משימות פתוחות
+  if (openTasks.length) {
+    html += '<div style="padding:10px 14px;border-bottom:1px solid var(--border);">'
+      + '<div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">✅ משימות פתוחות (' + openTasks.length + ')</div>'
+      + openTasks.slice(0, 5).map(t => {
+          const isOd = t.dueDate && new Date(t.dueDate) < new Date();
+          const ds = t.dueDate ? new Date(t.dueDate).toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' }) : '';
+          const urgCol = t.urgency === 1 ? 'var(--red)' : t.urgency === 2 ? 'var(--yellow)' : 'var(--accent)';
+          return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;" onclick="event.stopPropagation();openTaskDetail(\'' + t.id + '\')">'
+            + '<div style="width:8px;height:8px;min-width:8px;border-radius:50%;background:' + urgCol + ';"></div>'
+            + '<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(t.content) + '</span>'
+            + (ds ? '<span style="font-size:11px;color:' + (isOd ? 'var(--red)' : 'var(--text-3)') + ';">' + (isOd ? '⚠ ' : '') + ds + '</span>' : '')
+            + '</div>';
+        }).join('')
+      + (openTasks.length > 5 ? '<div style="font-size:12px;color:var(--accent);padding:4px 0;cursor:pointer;" onclick="event.stopPropagation();openProject(\'' + f.id + '\')">ועוד ' + (openTasks.length - 5) + ' ›</div>' : '')
+      + '</div>';
+  }
+
+  // אבני דרך ממתינות
+  const pendingMs = ms.filter(m => m.status !== 'done');
+  if (pendingMs.length) {
+    html += '<div style="padding:10px 14px;">'
+      + '<div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">אבני דרך</div>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:6px;">'
+      + pendingMs.slice(0, 5).map(m => {
+          const name = typeof m === 'string' ? m : (m.name || '');
+          const isOd = (m.due || m.dueDate) && new Date(m.due || m.dueDate) < new Date();
+          return '<span style="padding:3px 10px;border-radius:12px;font-size:12px;border:1px solid ' + (isOd ? 'rgba(217,48,37,.3)' : 'var(--border)') + ';color:' + (isOd ? 'var(--red)' : 'var(--text-2)') + ';">' + esc(name) + '</span>';
+        }).join('')
+      + '</div></div>';
+  }
+
+  // כפתור פתח כרטיס מלא
+  html += '<div style="padding:12px 14px;display:flex;justify-content:center;">'
+    + '<button onclick="event.stopPropagation();openProject(\'' + f.id + '\')" style="background:var(--accent);color:white;border-radius:10px;padding:8px 24px;font-size:14px;font-weight:700;font-family:var(--sans);">פתח כרטיס מלא ›</button>'
+    + '</div>';
+
+  return html;
+}
+
+function togglePvExpand(id) {
+  const details = document.getElementById('pvd-' + id);
+  const arrow = document.getElementById('pvarrow-' + id);
+  const row = document.getElementById('pvr-' + id);
+  if (!details) return;
+  const open = details.style.display !== 'none';
+  details.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.style.transform = open ? '' : 'rotate(90deg)';
+  if (row) row.style.borderColor = open ? 'var(--border)' : 'rgba(26,115,232,.4)';
+}
+
+function filterProjects(query) {
+  const q = (query || '').toLowerCase().trim();
+  const filtered = q ? state.folders.filter(f =>
+    (f.name || '').toLowerCase().includes(q) || (f.projectGroup || f.group || '').toLowerCase().includes(q)
+  ) : state.folders;
+  const list = document.getElementById('pv-list');
+  const count = document.getElementById('pv-count');
+  if (list) list.innerHTML = _buildProjectRows(filtered);
+  if (count) count.textContent = filtered.length + ' פרויקטים';
+}
+
+// ── 7. PROJECT DETAIL ─────────────────────────────────────
+function openProject(folderId) {
+  const f = state.folders.find(f => f.id === folderId);
+  if (!f) return;
+  state.currentProject = f;
+  state.currentDetailTab = 'main';
+  document.getElementById('detail-project-title').textContent = f.name;
+  document.querySelectorAll('.detail-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+  showScreen('detail');
+  renderDetailContent();
+}
+
+function closeDetail() { showScreen('main'); state.currentProject = null; }
+
+function switchDetailTab(tab, btn) {
+  state.currentDetailTab = tab;
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderDetailContent();
+}
+
+function switchDetailTabByName(tab) {
+  const tabs = ['main','tasks','milestones','team','money'];
+  const i = tabs.indexOf(tab);
+  const btns = document.querySelectorAll('.detail-tab');
+  if (i >= 0 && btns[i]) switchDetailTab(tab, btns[i]);
+}
+
+function renderDetailContent() {
+  const f = state.currentProject;
+  if (!f) return;
+  const c = document.getElementById('detail-content');
+  const pt = state.tasks.filter(t => t.linkedProject === f.id);
+  const ot = pt.filter(t => t.status === 'open');
+  const dt = pt.filter(t => t.status === 'done');
+  switch (state.currentDetailTab) {
+    case 'main':       renderDetailMain(c, f, pt, ot, dt); break;
+    case 'tasks':      renderDetailTasks(c, f, ot, dt); break;
+    case 'milestones': renderDetailMilestones(c, f); break;
+    case 'team':       renderDetailTeam(c, f); break;
+    case 'money':      renderDetailMoney(c, f, pt); break;
+    case 'files':      renderDetailFiles(c, f); break;
+  }
+}
+
+function renderDetailMain(c, f, pt, ot, dt) {
+  const tot = ot.length + dt.length, pct = tot > 0 ? Math.round(dt.length / tot * 100) : 0;
+  const ms = getMilestones(f), ct = getContacts(f), money = f.moneyConfig || f.money;
+  const COLS = ['#1a73e8','#0f9d58','#7c4dff','#f29900','#d93025'];
+  const col = f.color || COLS[state.folders.indexOf(f) % COLS.length] || '#1a73e8';
+
+  let html = '<div class="project-hero">'
+    + '<div class="hero-icon-row"><div class="hero-icon" style="background:' + col + '18;">' + (f.icon || '📂') + '</div>'
+    + '<div><div class="hero-name">' + esc(f.name) + '</div>' + (f.projectGroup ? '<div class="hero-group">📁 ' + esc(f.projectGroup) + '</div>' : '') + '</div></div>'
+    + '<div class="hero-stats">'
+    + '<div class="hero-stat"><div class="hero-stat-num" style="color:var(--accent)">' + ot.length + '</div><div class="hero-stat-lbl">פתוחות</div></div>'
+    + '<div class="hero-stat"><div class="hero-stat-num" style="color:var(--green)">' + dt.length + '</div><div class="hero-stat-lbl">הושלמו</div></div>'
+    + '<div class="hero-stat"><div class="hero-stat-num" style="color:var(--purple)">' + pct + '%</div><div class="hero-stat-lbl">התקדמות</div></div>'
+    + '</div>'
+    + (tot > 0 ? '<div style="margin-top:12px;"><div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:' + col + ';border-radius:3px;"></div></div></div>' : '')
+    + '</div>';
+
+  const urg = ot.filter(t => t.urgency === 1).slice(0, 3);
+  if (urg.length) html += '<div class="detail-section"><div class="detail-section-title">🔴 דחופות</div>' + urg.map(t => taskCardHtml(t, false)).join('') + (ot.filter(t=>t.urgency===1).length>3?'<div style="text-align:center;padding:8px;font-size:13px;color:var(--accent);cursor:pointer;" onclick="switchDetailTabByName(\'tasks\')">ועוד… ›</div>':'') + '</div>';
+
+  const norm = ot.filter(t => t.urgency !== 1).slice(0, 4);
+  if (norm.length) html += '<div class="detail-section"><div class="detail-section-title">✅ משימות פתוחות</div>' + norm.map(t => taskCardHtml(t, false)).join('') + (ot.filter(t=>t.urgency!==1).length>4?'<div style="text-align:center;padding:8px;font-size:13px;color:var(--accent);cursor:pointer;" onclick="switchDetailTabByName(\'tasks\')">הצג הכל ›</div>':'') + '</div>';
+
+  const pms = ms.filter(m => m.status !== 'done').slice(0, 3);
+  if (pms.length) html += '<div class="detail-section"><div class="detail-section-title">אבני דרך</div>' + pms.map(m => msHtml(m)).join('') + (ms.filter(m=>m.status!=='done').length>3?'<div style="text-align:center;padding:8px;font-size:13px;color:var(--accent);cursor:pointer;" onclick="switchDetailTabByName(\'milestones\')">כולן ›</div>':'') + '</div>';
+
+  if (ct.length) html += '<div class="detail-section"><div class="detail-section-title">👥 צוות (' + ct.length + ')</div>' + ct.slice(0,3).map(c2=>ctHtml(c2)).join('') + (ct.length>3?'<div style="text-align:center;padding:8px;font-size:13px;color:var(--accent);cursor:pointer;" onclick="switchDetailTabByName(\'team\')">כולם ›</div>':'') + '</div>';
+
+  if (money) {
+    const ti = calcIn(money), ri = calcRec(money), pm = ti > 0 ? Math.round(ri/ti*100) : 0;
+    const mc = pm>=80?'var(--green)':pm>=40?'var(--yellow)':'var(--red)';
+    html += '<div class="detail-section"><div class="detail-section-title">כסף</div>'
+      + '<div class="money-row"><div class="money-card"><div class="money-amount" style="color:var(--accent)">₪' + ti.toLocaleString() + '</div><div class="money-label">שווי</div></div>'
+      + '<div class="money-card"><div class="money-amount" style="color:var(--green)">₪' + ri.toLocaleString() + '</div><div class="money-label">התקבל</div></div></div>'
+      + '<div class="money-bar-wrap"><div class="money-bar-fill" style="width:'+Math.min(100,pm)+'%;background:'+mc+';"></div></div>'
+      + '<div class="money-pct">' + pm + '% שולם</div></div>';
+  }
+  c.innerHTML = html;
+}
+
+function renderDetailTasks(c, f, ot, dt) {
+  const urg = ot.filter(t => t.urgency === 1);
+  const norm = ot.filter(t => t.urgency !== 1).sort((a,b) => { if(a.dueDate&&b.dueDate)return new Date(a.dueDate)-new Date(b.dueDate);if(a.dueDate)return -1;if(b.dueDate)return 1;return 0; });
+  let html = '';
+  if (urg.length) html += '<div class="detail-section"><div class="detail-section-title">🔴 דחופות (' + urg.length + ')</div>' + urg.map(t=>taskCardHtml(t,false)).join('') + '</div>';
+  if (norm.length) html += '<div class="detail-section"><div class="detail-section-title">📋 פתוחות (' + norm.length + ')</div>' + norm.map(t=>taskCardHtml(t,false)).join('') + '</div>';
+  if (dt.length) html += '<div class="detail-section"><div class="detail-section-title">✅ הושלמו (' + dt.length + ')</div>' + dt.slice(0,10).map(t=>taskCardHtml(t,false)).join('') + '</div>';
+  if (!html) html = '<div class="empty"><div class="empty-icon">✓</div><div class="empty-title">אין משימות בפרויקט זה</div></div>';
+  c.innerHTML = html;
+}
+
+function renderDetailMilestones(c, f) {
+  const ms = getMilestones(f);
+  if (!ms.length) { c.innerHTML = '<div class="empty"><div class="empty-icon">🏁</div><div class="empty-title">אין אבני דרך</div></div>'; return; }
+  const pend = ms.filter(m=>m.status!=='done'), done = ms.filter(m=>m.status==='done');
+  let html = '';
+  if (pend.length) html += '<div class="detail-section"><div class="detail-section-title">⏳ ממתינות (' + pend.length + ')</div>' + pend.map(m=>msHtml(m)).join('') + '</div>';
+  if (done.length) html += '<div class="detail-section"><div class="detail-section-title">✅ הושלמו (' + done.length + ')</div>' + done.map(m=>msHtml(m)).join('') + '</div>';
+  c.innerHTML = html;
+}
+
+
+
+function renderDetailMoney(c, f, pt) {
+  const money = f.moneyConfig || f.money;
+  if (!money && !f.rule?.trackMoney) { c.innerHTML = '<div class="empty"><div class="empty-icon">💰</div><div class="empty-title">מעקב כספי לא הופעל</div><div class="empty-sub">ניתן להפעיל בתוסף ב-Gmail</div></div>'; return; }
+  const ti = money?calcIn(money):0, ri = money?calcRec(money):0, pm = ti>0?Math.round(ri/ti*100):0, mc = pm>=80?'var(--green)':pm>=40?'var(--yellow)':'var(--red)';
+  let html = '<div class="detail-section"><div class="detail-section-title">📊 סיכום</div>'
+    + '<div class="money-row"><div class="money-card"><div class="money-amount" style="color:var(--accent)">₪'+ti.toLocaleString()+'</div><div class="money-label">שווי כולל</div></div>'
+    + '<div class="money-card"><div class="money-amount" style="color:var(--green)">₪'+ri.toLocaleString()+'</div><div class="money-label">התקבל</div></div></div>'
+    + '<div class="money-card" style="margin-bottom:12px;"><div class="money-amount" style="color:'+(pm>=100?'var(--green)':'var(--red)')+'">₪'+(ti-ri).toLocaleString()+'</div><div class="money-label">יתרה לגביה</div></div>'
+    + '<div class="money-bar-wrap"><div class="money-bar-fill" style="width:'+Math.min(100,pm)+'%;background:'+mc+';"></div></div>'
+    + '<div class="money-pct">'+pm+'% שולם</div></div>';
+  if (money?.installments?.length) { html += '<div class="detail-section"><div class="detail-section-title">📅 תשלומי שלבים</div>'; money.installments.forEach(i => { html += '<div class="inst-row"><div class="inst-paid-dot" style="background:'+(i.paid?'var(--green)':'var(--text-3)')+'"></div><div style="flex:1;min-width:0;"><div class="inst-name">'+esc(i.name||'תשלום')+'</div>'+(i.dueDate?'<div class="inst-date">'+new Date(i.dueDate).toLocaleDateString('he-IL')+'</div>':'')+'</div><div class="inst-amount" style="color:'+(i.paid?'var(--green)':'var(--text)')+'">₪'+(i.amount||0).toLocaleString()+'</div></div>'; }); html += '</div>'; }
+  if (money?.expenses?.length) { html += '<div class="detail-section"><div class="detail-section-title">📉 הוצאות</div>'; money.expenses.forEach(e => { html += '<div class="inst-row"><div class="inst-paid-dot" style="background:'+(e.paid?'var(--green)':'var(--text-3)')+'"></div><div style="flex:1;"><div class="inst-name">'+esc(e.name||'הוצאה')+'</div></div><div class="inst-amount" style="color:var(--red)">-₪'+(e.amount||0).toLocaleString()+'</div></div>'; }); html += '</div>'; }
+  c.innerHTML = html;
+}
+
+// ── NEW TASK MODAL ────────────────────────────────────────
+function openNewTaskModal() {
+  // הסר overlay קיים אם יש
+  document.getElementById('ntm-overlay')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'ntm-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease;';
+
+  const projectOptions = state.folders.map(f =>
+    '<option value="' + f.id + '">' + f.name + '</option>'
+  ).join('');
+
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:24px 24px 0 0;width:100%;max-width:480px;
+                padding:0 0 calc(var(--safe-bottom) + 16px);animation:slideUp .25s ease;
+                display:flex;flex-direction:column;max-height:90vh;">
+      <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;flex-shrink:0;"></div>
+      <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;">
+        <div style="font-size:17px;font-weight:700;flex:1;">✅ משימה חדשה</div>
+        <button onclick="document.getElementById('ntm-overlay').remove()"
+          style="width:30px;height:30px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);
+                 font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-2);">✕</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:16px 20px;">
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">תיאור המשימה *</div>
+          <textarea id="ntm-content" rows="3" placeholder="מה צריך לעשות?"
+            style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;
+                   font-size:15px;font-family:var(--sans);resize:none;direction:rtl;color:var(--text);
+                   background:#fff;box-sizing:border-box;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">תאריך יעד</div>
+            <input type="date" id="ntm-due"
+              style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;
+                     font-size:14px;font-family:var(--sans);color:var(--text);background:#fff;box-sizing:border-box;"
+              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">דחיפות</div>
+            <select id="ntm-urgency"
+              style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;
+                     font-size:14px;font-family:var(--sans);color:var(--text);background:#fff;box-sizing:border-box;appearance:none;">
+              <option value="3">רגילה</option>
+              <option value="1">🔴 קריטית</option>
+              <option value="2">🟡 גבוהה</option>
+              <option value="4">⚪ נמוכה</option>
+            </select>
+          </div>
+        </div>
+
+        ${projectOptions ? `
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">פרויקט</div>
+          <select id="ntm-project"
+            style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;
+                   font-size:14px;font-family:var(--sans);color:var(--text);background:#fff;box-sizing:border-box;appearance:none;">
+            <option value="">— ללא פרויקט —</option>
+            ${projectOptions}
+          </select>
+        </div>` : ''}
+
+        <div style="margin-bottom:6px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">פתקית</div>
+          <input type="text" id="ntm-note" placeholder="הערה קצרה (אופציונלי)"
+            style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;
+                   font-size:14px;font-family:var(--sans);direction:rtl;color:var(--text);background:#fff;box-sizing:border-box;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+      </div>
+
+      <div style="padding:12px 20px 0;flex-shrink:0;">
+        <button onclick="_saveNewTask()"
+          style="width:100%;padding:14px;border-radius:12px;background:var(--accent);color:white;
+                 font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:var(--sans);
+                 transition:background .2s;"
+          onmousedown="this.style.background='var(--accent-d)'" onmouseup="this.style.background='var(--accent)'">
+          ✅ שמור משימה
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  setTimeout(() => document.getElementById('ntm-content')?.focus(), 300);
+}
+
+async function _saveNewTask() {
+  const content = (document.getElementById('ntm-content')?.value || '').trim();
+  if (!content) {
+    const el = document.getElementById('ntm-content');
+    if (el) { el.style.borderColor = 'var(--red)'; el.focus(); }
+    showSnack('⚠️ יש להזין תיאור משימה');
+    return;
+  }
+
+  const dueDate   = document.getElementById('ntm-due')?.value    || null;
+  const urgency   = parseInt(document.getElementById('ntm-urgency')?.value || '3');
+  const projectId = document.getElementById('ntm-project')?.value || null;
+  const note      = (document.getElementById('ntm-note')?.value || '').trim();
+
+  const task = {
+    id:            'task_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+    content,
+    createdAt:     new Date().toISOString(),
+    status:        'open',
+    type:          'general',
+    dueDate:       dueDate || null,
+    urgency,
+    linkedProject: projectId || null,
+    stickyNote:    note || null,
+    stickyDate:    note ? new Date().toISOString() : null,
+    assignee:      null,
+    notes:         '',
+  };
+
+  // הוסף ל-state
+  state.tasks.unshift(task);
+
+  // נסה לשמור ב-Drive
+  if (state.tasksFileId) {
+    try {
+      await drivePatch(state.tasksFileId, { tasks: state.tasks });
+    } catch(e) {
+      console.warn('_saveNewTask drive error:', e);
+    }
+  }
+
+  document.getElementById('ntm-overlay')?.remove();
+  showSnack('✅ משימה נוספה');
+  renderContent();
+}
+
+// ── 8. TASK DETAIL SCREEN ────────────────────────────────
+function openTaskDetail(taskId) {
+  const t = state.tasks.find(t => t.id === taskId);
+  if (!t) return;
+  state.currentTask = t;
+
+  const isDone   = t.status === 'done';
+  const folder   = t.linkedProject ? state.folders.find(f => f.id === t.linkedProject) : null;
+  const projName = folder ? folder.name : null;
+  const due      = t.dueDate ? new Date(t.dueDate) : null;
+  const today    = new Date(); today.setHours(0,0,0,0);
+  const diff     = due ? Math.ceil((due - today) / 86400000) : null;
+
+  // ── עוזרי בניית כרטיס ──────────────────────────────────
+
+  // כפתור פעולה בסרגל העליון
+  function aBtn(svgInner, label, action, danger) {
+    var clr = danger ? 'var(--red)' : 'var(--text)';
+    return '<div data-tid="' + t.id + '" data-action="' + action + '" onclick="_tdAction(this)"'
+      + ' style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;cursor:pointer;'
+      + 'padding:6px 4px;border-radius:8px;color:' + clr + ';background:transparent;border:none;font-family:var(--sans);">'
+      + '<svg style="width:17px;height:17px;" viewBox="0 0 16 16" fill="none">' + svgInner + '</svg>'
+      + '<span style="font-size:10px;color:' + (danger ? 'var(--red)' : 'var(--text-3)') + ';">' + label + '</span>'
+      + '</div>';
+  }
+
+  // שורת מידע
+  function mRow(iconHtml, val, sub) {
+    if (!val && !sub) return '';
+    return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 14px;border-bottom:1px solid var(--surface2);">'
+      + '<div style="width:20px;flex-shrink:0;padding-top:1px;display:flex;align-items:center;color:var(--text-3);">' + iconHtml + '</div>'
+      + '<div style="flex:1;min-width:0;">'
+        + (val ? '<div style="font-size:13px;color:var(--text);display:flex;align-items:center;gap:4px;flex-wrap:wrap;">' + val + '</div>' : '')
+        + (sub ? sub : '')
+      + '</div>'
+      + '</div>';
+  }
+
+  // SVG אייקונים
+  const IC = {
+    back:   '<polyline points="6,3 11,8 6,13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+    edit:   '<path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>',
+    done:   '<circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.3"/><polyline points="5,8.5 7,10.5 11,6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>',
+    sticky: '<rect x="2" y="2" width="8.5" height="11" rx="1.2" stroke="currentColor" stroke-width="1.3"/>',
+    focus:  '<circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r=".8" fill="currentColor"/><line x1="8" y1="1" x2="8" y2="3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="8" y1="13" x2="8" y2="15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="1" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="13" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+    trash:  '<polyline points="3,4.5 13,4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6 4.5V3h4v1.5" stroke="currentColor" stroke-width="1.2"/><rect x="4" y="4.5" width="8" height="8.5" rx="1" stroke="currentColor" stroke-width="1.3"/><line x1="6.5" y1="7" x2="6.5" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="9.5" y1="7" x2="9.5" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+    cal:    '<rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="5" y1="2" x2="5" y2="4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="11" y1="2" x2="11" y2="4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="2" y1="6.5" x2="14" y2="6.5" stroke="currentColor" stroke-width="1.1"/>',
+    folder: '<path d="M2 4.5C2 3.67 2.67 3 3.5 3H6.5L8 5H12.5C13.33 5 14 5.67 14 6.5V11.5C14 12.33 13.33 13 12.5 13H3.5C2.67 13 2 12.33 2 11.5V4.5Z" stroke="currentColor" stroke-width="1.3" fill="none"/>',
+    flag:   '<line x1="1.5" y1="0.5" x2="1.5" y2="12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1.5" y="0.5" width="4" height="3" fill="currentColor" rx="0.3"/><rect x="5.5" y="0.5" width="2" height="3" fill="white"/><rect x="5.5" y="2" width="4.5" height="1.5" fill="currentColor"/>',
+    clip:   '<path d="M13.5 7.5L7.5 13.5a4 4 0 01-5.657-5.657l6-6a2.5 2.5 0 013.535 3.535L5.5 11.25a1 1 0 01-1.414-1.414L10 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
+    recur:  '<path d="M13.5 8a5.5 5.5 0 11-1.1-3.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><polyline points="10,2.5 12.5,2.5 12.5,5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>',
+    wait:   '<circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/><polyline points="8,4.5 8,8 10.5,10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>',
+  };
+
+  // ── שורת תאריך עם נקודות ──
+  var dateRowHtml = '';
+  if (diff !== null) {
+    var overdue   = diff < 0;
+    var clr       = overdue ? '#dc2626' : 'var(--text)';
+    var dStr      = due.toLocaleDateString('he-IL',{day:'numeric',month:'numeric',year:'2-digit'}).replace(/\//g,'.');
+    var lbl       = overdue ? 'איחור '+Math.abs(diff)+' ימים לתאריך היעד '+dStr
+                  : diff === 0 ? 'תאריך היעד היום'
+                  : diff === 1 ? 'נותר יום לתאריך היעד '+dStr
+                  : 'נותרו '+diff+' ימים לתאריך היעד '+dStr;
+    var filled    = overdue ? 5 : Math.max(0, 5 - Math.round(diff / 4));
+    var dotActive = overdue ? '#dc2626' : '#374151';
+    var dotEmpty  = overdue ? '#fca5a5' : '#d1d5db';
+    var dots      = [0,1,2,3,4].map(function(i){
+      return '<div style="width:6px;height:6px;border-radius:50%;background:'+(i<filled?dotActive:dotEmpty)+';flex-shrink:0;"></div>';
+    }).join('');
+    var pinHtml2  = (t.pin==='red'||t.pin==='green')
+      ? '<span style="font-size:13px;flex-shrink:0;'+(t.pin==='green'?'filter:hue-rotate(95deg) saturate(4) brightness(1.1);':'')+'">📌</span>'
+      : '';
+    var createdDays = t.createdAt ? Math.floor((Date.now()-new Date(t.createdAt).getTime())/86400000) : null;
+    var createdTxt  = createdDays !== null ? (createdDays===0?'נוצרה היום':'עברו '+createdDays+' ימים') : '';
+    dateRowHtml = '<div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-bottom:1px solid #e8eaed;background:#f8f9fa;font-size:13px;flex-wrap:wrap;">'
+      + pinHtml2
+      + '<span style="color:'+clr+';">'+lbl+'</span>'
+      + '<div style="display:flex;gap:3px;align-items:center;margin:0 4px;">'+dots+'</div>'
+      + (createdTxt ? '<span style="font-size:11px;color:var(--text-3);"> | '+createdTxt+'</span>' : '')
+      + '</div>';
+  }
+
+  // ── חזרתיות ──
+  var recurHtml = '';
+  if (t.recurring) {
+    var units = {days:'ימים',weeks:'שבועות',months:'חודשים',years:'שנים'};
+    var interval = t.recurringInterval || 1;
+    var unit = t.recurringUnit || 'weeks';
+    var txt = '';
+    if (unit === 'days')   { txt = interval===1?'חוזרת כל יום':'חוזרת כל '+interval+' ימים'; }
+    else if (unit === 'weeks')  {
+      var base = interval===1?'חוזרת כל שבוע':'חוזרת כל '+interval+' שבועות';
+      if (t.recurringWeekdays&&t.recurringWeekdays.length) {
+        var dnames=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+        txt = base + ' ב' + t.recurringWeekdays.map(function(d){return 'יום '+(dnames[d]||d);}).join(', ');
+      } else txt = base;
+    } else if (unit === 'months') {
+      var base = interval===1?'חוזרת כל חודש':'חוזרת כל '+interval+' חודשים';
+      txt = base + (t.recurringMonthDay?' ביום '+t.recurringMonthDay+' של החודש':'');
+    } else if (unit === 'years') {
+      var months=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+      var base = interval===1?'חוזרת כל שנה':'חוזרת כל '+interval+' שנים';
+      txt = base + (t.recurringYearDay&&t.recurringYearMonth?' ביום '+t.recurringYearDay+' של '+(months[t.recurringYearMonth-1]||t.recurringYearMonth):'');
+    }
+    var startTxt  = t.recurringStartDate ? 'מ-'+new Date(t.recurringStartDate).toLocaleDateString('he-IL',{day:'numeric',month:'numeric',year:'2-digit'}).replace(/\//g,'.') : '';
+    var countTxt  = t.recurringCount!=null ? 'הוצגה '+t.recurringCount+(t.recurringLimit?' מתוך '+t.recurringLimit:'')+ ' פעמים' : '';
+    var parts     = [txt,startTxt,countTxt].filter(Boolean);
+    recurHtml = '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 14px;border-bottom:1px solid #e8eaed;background:#f8f9fa;font-size:12px;color:var(--text-2);">'
+      + '<svg style="width:13px;height:13px;flex-shrink:0;" viewBox="0 0 16 16" fill="none">'+IC.recur+'</svg>'
+      + parts.map(function(p,i){ return (i?'<span style="color:var(--text-3);margin:0 2px;">|</span>':'')+p; }).join('')
+      + '</div>';
+  }
+
+  // ── ממתינה ל ──
+  var waitHtml = t.waitingFor
+    ? '<div style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-bottom:1px solid #e8eaed;background:#f8f9fa;font-size:12px;color:var(--text-2);">'
+        + '<svg style="width:13px;height:13px;flex-shrink:0;" viewBox="0 0 16 16" fill="none">'+IC.wait+'</svg>'
+        + '<span style="color:var(--text-3);font-weight:600;">ממתינה ל:</span>'
+        + '<span>'+esc(t.waitingFor)+'</span>'
+      + '</div>'
+    : '';
+
+  // ── פרויקט + אבן דרך ──
+  var projRowHtml = (projName || t.linkedMilestone)
+    ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:7px 14px;border-bottom:1px solid #e8eaed;background:#f8f9fa;">'
+        + (projName ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--text-2);cursor:pointer;" onclick="closeTaskScreen();openProject(\''+folder.id+'\')">'
+            + '<svg style="width:12px;height:12px;" viewBox="0 0 16 16" fill="none">'+IC.folder+'</svg>'+esc(projName)+'</span>' : '')
+        + (projName && t.linkedMilestone ? '<span style="color:var(--text-3);font-size:11px;">|</span>' : '')
+        + (t.linkedMilestone ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--text-2);">'
+            + '<svg style="width:12px;height:12px;" viewBox="0 0 12 13" fill="none">'+IC.flag+'</svg>'+esc(t.linkedMilestone)+'</span>' : '')
+      + '</div>'
+    : '';
+
+  // ── אחראי + דחיפות ──
+  var assigneeName = '';
+  if (t.assignee) {
+    assigneeName = typeof t.assignee === 'string' ? t.assignee
+      : (t.assignee.name || t.assignee.email || '');
+  }
+  var urgMap   = {1:{c:'#dc2626',l:'קריטי'},2:{c:'#f59e0b',l:'גבוה'},3:{c:'#3b82f6',l:'רגיל'},4:{c:'#9ca3af',l:'נמוך'}};
+  var urgCircles = '';
+  if (t.urgency) {
+    urgCircles = [1,2,3,4].map(function(u){
+      var uc = urgMap[u]; var sel = t.urgency===u;
+      return '<div title="'+uc.l+'" style="width:22px;height:22px;border-radius:50%;background:'+(sel?uc.c:'#e5e7eb')+';display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+(sel?'white':'#9ca3af')+';flex-shrink:0;border:2px solid '+(sel?uc.c:'#d1d5db')+';">'+u+'</div>';
+    }).join('');
+  }
+  var assigneeRowHtml = (assigneeName || t.urgency)
+    ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap;padding:7px 14px;border-bottom:1px solid #e8eaed;background:#f8f9fa;overflow:hidden;">'
+        + (assigneeName
+          ? '<span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2);flex:1;min-width:0;">'
+              + '<span style="color:var(--text-3);font-weight:700;">אחראי:</span>'
+              + '<div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7c4dff);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">'+esc(assigneeName[0]||'?')+'</div>'
+              + '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(assigneeName)+'</span>'
+            + '</span>'
+          : '')
+        + (urgCircles
+          ? '<span style="display:inline-flex;align-items:center;gap:3px;margin-right:auto;flex-shrink:0;">'
+              + urgCircles
+              + '<span style="font-size:11px;color:var(--text-3);margin-right:4px;">'+(urgMap[t.urgency]||{l:''}).l+'</span>'
+            + '</span>'
+          : '')
+      + '</div>'
+    : '';
+
+  // ── פתקית ──
+  var stickyRowHtml = '';
+  if (t.stickyNote) {
+    var ds = t.stickyDate ? ' <span style="font-size:9.5px;color:var(--text-3);">— '+new Date(t.stickyDate).toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'2-digit'}).replace(/\//g,'.')+'</span>' : '';
+    stickyRowHtml = '<div style="display:flex;align-items:center;gap:7px;padding:7px 14px;border-bottom:1px solid #e8eaed;background:#f8f9fa;">'
+      + _STICKY_SVG
+      + '<span style="font-size:13px;color:var(--text-2);flex:1;">'+esc(t.stickyNote)+ds+'</span>'
+      + '</div>';
+  }
+
+  // ── שווי כספי ──
+  var amountRowHtml = (t.amount && t.amountDirection)
+    ? '<div style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-bottom:1px solid #e8eaed;background:#f8f9fa;font-size:13px;">'
+        + '<span style="color:var(--text-2);">שווי:</span>'
+        + '<span style="font-weight:600;color:'+(t.amountDirection==='income'?'var(--green)':'var(--red)')+';">'+t.amount.toLocaleString()+' ₪</span>'
+        + '<span style="font-size:12px;color:var(--text-3);">'+(t.amountDirection==='income'?'הכנסה':'הוצאה')+'</span>'
+      + '</div>'
+    : '';
+
+  // ── תוכן + הערות ──
+  var contentHtml = '<div style="padding:12px 16px 8px;border-bottom:1px solid var(--surface2);">'
+    + '<div style="font-size:16px;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:8px;'+(isDone?'text-decoration:line-through;color:var(--text-3);':'')+'">'+esc(t.content)+'</div>'
+    + (t.notes
+      ? '<div style="font-size:13px;color:var(--text-2);line-height:1.7;white-space:pre-wrap;">'+esc(t.notes)+'</div>'
+      : '<div style="font-size:13px;color:var(--text-3);">הערה...</div>')
+    + '</div>';
+
+  // ── תתי-משימות ──
+  var subTasksHtml = '';
+  if (t.subTasks && t.subTasks.length) {
+    subTasksHtml = '<div style="border-top:1px solid var(--surface2);">'
+      + '<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.3px;padding:10px 16px 6px;">רשימת משימות</div>'
+      + t.subTasks.map(function(s, si) {
+          var sdone = s.done || s.status === 'done';
+          var stickyLine = '';
+          if (s.stickyNote) {
+            var sds = s.stickyDate ? ' <span style="font-size:9.5px;color:var(--text-3);">'+new Date(s.stickyDate).toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'2-digit'})+'</span>' : '';
+            stickyLine = '<div style="display:flex;align-items:center;gap:4px;margin-top:2px;margin-right:26px;">'+_STICKY_SVG+'<span style="font-size:11px;color:var(--text-3);">'+esc(s.stickyNote)+sds+'</span></div>';
+          }
+          var smid = 'sdm-'+t.id+'-'+si;
+          return '<div style="padding:6px 16px;border-top:1px dashed var(--border);display:flex;align-items:flex-start;gap:6px;">'
+            + '<div style="flex:1;">'
+              + '<div style="display:flex;align-items:center;gap:8px;">'
+                + '<div style="width:16px;height:16px;border-radius:50%;border:1.5px solid '+(sdone?'#0f9d58':'#b0b8c1')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;background:'+(sdone?'#0f9d58':'transparent')+';">'
+                  + '<svg style="width:10px;height:10px;" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                + '</div>'
+                + '<span style="font-size:13px;font-weight:600;color:'+(sdone?'var(--text-3)':'var(--text)')+';'+(sdone?'text-decoration:line-through;':'')+';">'+(si+1)+'. '+esc(s.content||'')+'</span>'
+              + '</div>'
+              + stickyLine
+            + '</div>'
+            + '<div style="position:relative;flex-shrink:0;">'+_taskBuildMenu(smid, null)+'</div>'
+          + '</div>';
+        }).join('')
+      + '</div>';
+  }
+
+  // ── קבצים ──
+  var allFiles    = t.linkedFiles || [];
+  var filesRowHtml = allFiles.length
+    ? '<div style="padding:14px 16px 12px;border-top:1px solid var(--surface2);">'
+        + '<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.3px;margin-bottom:8px;">קבצים מצורפים</div>'
+        + '<div style="display:flex;flex-direction:column;gap:4px;">'
+          + allFiles.map(function(f2){
+              var name = (f2.name||'').replace(/\.[a-zA-Z0-9]{1,6}$/,'');
+              return '<div style="display:flex;align-items:center;gap:7px;padding:4px 0;">'
+                + '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;color:#9ca3af;">'+IC.clip+'</svg>'
+                + '<span style="font-size:13px;">'+esc(name)+'</span>'
+              + '</div>';
+            }).join('')
+        + '</div>'
+      + '</div>'
+    : '';
+
+  // ── עדכן כותרת ב-topbar ──
+  document.getElementById('task-screen-title').textContent = t.content.slice(0, 30) + (t.content.length > 30 ? '…' : '');
+
+  // ── הרכב הכרטיס המלא ──
+  document.getElementById('task-screen-body').innerHTML =
+    '<div style="background:white;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">'
+
+      // ── ACTION BAR ──
+      + '<div style="display:flex;align-items:stretch;padding:4px 8px;border-bottom:1px solid var(--surface2);">'
+        + aBtn(IC.back,   'חזרה',        'back',   false)
+        + aBtn(IC.focus,  'לטיפול היום', 'focus',  false)
+        + aBtn(IC.sticky, 'פתקית',       'sticky', false)
+        + aBtn(IC.edit,   'עריכה',       'edit',   false)
+        + aBtn(IC.done,   isDone ? 'בטל בוצע' : 'סמן כבוצע', 'done', false)
+        + aBtn(IC.trash,  'מחיקה',       'trash',  true)
+      + '</div>'
+
+      + dateRowHtml
+      + recurHtml
+      + waitHtml
+      + projRowHtml
+      + assigneeRowHtml
+      + stickyRowHtml
+      + amountRowHtml
+      + contentHtml
+      + subTasksHtml
+      + filesRowHtml
+
+    + '</div>';
+
+  showScreen('task');
+}
+
+// ── פעולות מתוך כרטיס המשימה ──────────────────────────────
+function _tdAction(el) {
+  var tid    = el.dataset.tid;
+  var action = el.dataset.action;
+  if      (action === 'back')   { closeTaskScreen(); }
+  else if (action === 'done')   { toggleTask(tid).then(function(){ openTaskDetail(tid); }); }
+  else if (action === 'focus')  { showSnack('נוסף לטיפול היום'); /* TODO */ }
+  else if (action === 'sticky') { showSnack('הוספת פתקית — בקרוב'); /* TODO */ }
+  else if (action === 'edit')   { showSnack('עריכה — בקרוב'); /* TODO */ }
+  else if (action === 'trash')  { showSnack('מחיקה — בקרוב'); /* TODO */ }
+}
+
+function closeTaskScreen() {
+  state.currentTask = null;
+  if (state.currentProject) showScreen('detail');
+  else showScreen('main');
+}
+
+// ── 9. ACTIONS ────────────────────────────────────────────
+async function toggleTask(id) {
+  if (state.saving) return;
+  const t = state.tasks.find(t => t.id === id);
+  if (!t) return;
+  const done = t.status !== 'done';
+  const card = document.getElementById('task-' + id);
+  if (done && card) { card.style.transition = 'opacity .35s,transform .35s'; card.style.opacity = '0'; card.style.transform = 'translateX(50px)'; await sleep(350); }
+  t.status = done ? 'done' : 'open';
+  if (state.tasksFileId) {
+    state.saving = true;
+    showSnack(done ? '✓ משימה הושלמה' : '↩ נפתחה מחדש');
+    try { await drivePatch(state.tasksFileId, { tasks: state.tasks }); }
+    catch(e) { showSnack('שגיאה בשמירה'); t.status = done ? 'open' : 'done'; }
+    state.saving = false;
+  }
+  if (state.currentProject) renderDetailContent();
+  else renderContent();
+}
+
+function handleNewTask() {
+  const txt = prompt('תוכן המשימה:');
+  if (!txt?.trim()) return;
+  const t = { id:'task_'+Date.now(), content:txt.trim(), createdAt:new Date().toISOString(), status:'open', type:'general', dueDate:null, urgency:3, linkedProject:state.currentProject?.id||null, assignee:null, notes:'' };
+  state.tasks.unshift(t);
+  if (state.currentProject) renderDetailContent(); else renderContent();
+  if (state.tasksFileId) drivePatch(state.tasksFileId, { tasks: state.tasks }).then(() => showSnack('✓ משימה נוצרה')).catch(() => showSnack('שגיאה'));
+}
+
+// ── 10. UI HELPERS ────────────────────────────────────────
+function getMilestones(f) { if (f.milestoneObjects?.length) return f.milestoneObjects; return (f.milestones||[]).map(m => typeof m==='string'?{name:m}:m); }
+function getContacts(f) { const r=f.rule||{}, all=[...(r.contacts||[]),...(r.addedContacts||[])], d=f.contactDetails||{}; return all.map(email=>{const cd=d[email]||{};return{email,name:cd.name||email.split('@')[0],role:cd.role||''};}).filter(c=>c.email); }
+function calcIn(m) { if(!m)return 0;let t=0;if(m.upfront?.enabled)t+=m.upfront.amount||0;(m.installments||[]).forEach(i=>t+=i.amount||0);if(m.hourly?.enabled)t+=(m.hourly.ratePerHour||0)*(m.hourly.estimatedHours||0);if(!t)t=m.totalAmount||0;return Math.round(t); }
+function calcRec(m) { if(!m)return 0;let r=0;if(m.upfront?.enabled&&m.upfront.received)r+=m.upfront.amount||0;(m.installments||[]).forEach(i=>{if(i.paid)r+=i.amount||0;});if(m.hourly?.enabled)r+=(m.hourly.ratePerHour||0)*(m.hourly.loggedHours||0);return Math.round(r); }
+
+function msHtml(m) {
+  const name = typeof m==='string'?m:(m.name||''), done=m.status==='done', due=m.due||m.dueDate;
+  const today = new Date(); today.setHours(0,0,0,0);
+  let dc='upcoming', dcolor='var(--text-2)', ds='';
+  if (done) dc='done';
+  else if (due) { const d=new Date(due); ds=d.toLocaleDateString('he-IL',{day:'numeric',month:'short'}); if(d<today){dc='overdue';dcolor='var(--red)';}else if((d-today)/86400000<=7)dcolor='var(--yellow)'; }
+  const amt = m.amount ? '<span class="chip" style="color:var(--green)">💰 ₪'+Number(m.amount).toLocaleString()+'</span>' : '';
+  return '<div class="milestone-item"><div class="ms-dot '+dc+'"></div><div class="ms-name '+(done?'done':'')+'" style="flex:1;">'+esc(name)+'</div>'+amt+(ds?'<div class="ms-date" style="color:'+dcolor+'">'+ds+'</div>':'')+'</div>';
+}
+
+function ctHtml(ct) {
+  const COLS = ['#1a73e8','#0f9d58','#7c4dff','#f29900','#d93025','#00bcd4','#e91e63','#009688'];
+  const key  = ct.email || ct.name || '?';
+  const col  = COLS[key.charCodeAt(0) % COLS.length];
+  const initials = (ct.name || ct.email || '?')
+    .split(' ').filter(Boolean).map(w => w[0]).join('').slice(0,2).toUpperCase();
+  return '<div class="contact-item">'
+    + '<div class="contact-avatar" style="background:' + col + '">' + initials + '</div>'
+    + '<div style="min-width:0;flex:1;">'
+      + '<div class="contact-name">' + esc(ct.name || ct.email) + '</div>'
+      + (ct.name && ct.email ? '<div class="contact-email">' + esc(ct.email) + '</div>' : '')
+      + (ct.role ? '<span class="contact-role">' + esc(ct.role) + '</span>' : '')
+    + '</div>'
+    + '</div>';
+}
+
+function renderDetailTeam(c, f) {
+  const ct = getContacts(f);
+  if (!ct.length) {
+    c.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">אין אנשי קשר</div></div>';
+    return;
+  }
+  c.innerHTML = '<div class="detail-section">'
+    + '<div class="detail-section-title">👥 אנשי קשר (' + ct.length + ')</div>'
+    + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">'
+    + ct.map(c2 => ctHtml(c2)).join('')
+    + '</div></div>';
+}
+
+function switchTab(tab, btn) {
+  state.currentTab = tab;
+  state.currentProject = null;
+  state.currentTask = null;
+  document.querySelectorAll('#main-tabs .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  showScreen('main');
+  renderContent();
+}
+
+function showScreen(n) {
+  // מסכי רמה עליונה
+  document.getElementById('screen-login').style.display   = (n==='login')   ? 'flex' : 'none';
+  document.getElementById('screen-loading').style.display = (n==='loading') ? 'flex' : 'none';
+  document.getElementById('screen-app').style.display     = (n==='login'||n==='loading') ? 'none' : 'flex';
+
+  // מסכים פנימיים בתוך screen-app
+  if (n !== 'login' && n !== 'loading') {
+    document.getElementById('screen-main').style.display   = (n==='main')   ? 'flex' : 'none';
+    document.getElementById('screen-task').style.display   = (n==='task')   ? 'flex' : 'none';
+    document.getElementById('screen-detail').style.display = (n==='detail') ? 'flex' : 'none';
+  }
+
+  // tabs ראשי — מוצג בכל מסכי ה-app (חוץ מ-login/loading)
+  const mainTabs = document.getElementById('main-tabs');
+  if (mainTabs) mainTabs.style.display = (n !== 'login' && n !== 'loading') ? 'flex' : 'none';
+
+  // כפתור רענון — מוצג רק במסך main
+  const refreshBtn = document.getElementById('btn-refresh');
+  if (refreshBtn) refreshBtn.style.display = (n==='main') ? 'flex' : 'none';
+
+
+}
+
+function showMain() { showScreen('main'); }
+function setLoadingText(t) { document.getElementById('loading-text').textContent = t; }
+function showError(m) { const el=document.getElementById('error-banner'); el.textContent=m; el.style.display='block'; }
+let _snackTimer;
+function showSnack(m) { const el=document.getElementById('snackbar'); el.textContent=m; el.classList.add('show'); clearTimeout(_snackTimer); _snackTimer=setTimeout(()=>el.classList.remove('show'),2800); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }// ── RENDER FILES ──────────────────────────────────────────
+// ── עוזרי קבצים ──────────────────────────────────────────
+
+// מסיר סיומת משם קובץ
+function _fileBaseName(name) {
+  return (name || '').replace(/\.[a-zA-Z0-9]{1,6}$/, '').trim() || name;
+}
+
+// מחזיר אובייקט { color, label, svg } בסגנון Windows
+function _fileWinIcon(mime, name) {
+  const ext = ((name || '').match(/\.([a-zA-Z0-9]{1,6})$/) || [])[1]?.toLowerCase() || '';
+  const m   = mime || '';
+
+  // PDF
+  if (m.includes('pdf') || ext === 'pdf')
+    return { color:'#f40f02', label:'PDF', svg:
+      '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>'
+      +'<rect x="2" y="1" width="12" height="5" rx="1.5" fill="#f40f02"/>'
+      +'<text x="8" y="5.8" text-anchor="middle" font-size="3.2" font-weight="700" fill="#fff" font-family="Arial">PDF</text>'
+      +'<line x1="4.5" y1="8.5" x2="11.5" y2="8.5" stroke="#ccc" stroke-width=".8"/>'
+      +'<line x1="4.5" y1="10.5" x2="11.5" y2="10.5" stroke="#ccc" stroke-width=".8"/>'
+      +'<line x1="4.5" y1="12.5" x2="9" y2="12.5" stroke="#ccc" stroke-width=".8"/>'};
+
+  // Word / Doc
+  if (m.includes('word') || m.includes('document') || ext==='doc' || ext==='docx')
+    return { color:'#185abd', label:'Word', svg:
+      '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>'
+      +'<rect x="2" y="1" width="12" height="5" rx="1.5" fill="#185abd"/>'
+      +'<text x="8" y="5.8" text-anchor="middle" font-size="3.5" font-weight="700" fill="#fff" font-family="Arial">W</text>'
+      +'<line x1="4.5" y1="8.5" x2="11.5" y2="8.5" stroke="#ccc" stroke-width=".8"/>'
+      +'<line x1="4.5" y1="10.5" x2="11.5" y2="10.5" stroke="#ccc" stroke-width=".8"/>'
+      +'<line x1="4.5" y1="12.5" x2="9" y2="12.5" stroke="#ccc" stroke-width=".8"/>'};
+
+  // Excel / Spreadsheet
+  if (m.includes('spreadsheet') || m.includes('excel') || ext==='xls' || ext==='xlsx' || ext==='csv')
+    return { color:'#107c41', label:'Excel', svg:
+      '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>'
+      +'<rect x="2" y="1" width="12" height="5" rx="1.5" fill="#107c41"/>'
+      +'<text x="8" y="5.8" text-anchor="middle" font-size="3.5" font-weight="700" fill="#fff" font-family="Arial">X</text>'
+      +'<rect x="4.5" y="7.5" width="3" height="2" fill="#e2f0db"/><rect x="8.5" y="7.5" width="3" height="2" fill="#e2f0db"/>'
+      +'<rect x="4.5" y="10.5" width="3" height="2" fill="#e2f0db"/><rect x="8.5" y="10.5" width="3" height="2" fill="#e2f0db"/>'};
+
+  // PowerPoint
+  if (m.includes('presentation') || m.includes('powerpoint') || ext==='ppt' || ext==='pptx')
+    return { color:'#c43e1c', label:'PPT', svg:
+      '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>'
+      +'<rect x="2" y="1" width="12" height="5" rx="1.5" fill="#c43e1c"/>'
+      +'<text x="8" y="5.8" text-anchor="middle" font-size="3.2" font-weight="700" fill="#fff" font-family="Arial">PPT</text>'
+      +'<rect x="4" y="7.5" width="8" height="5" rx=".8" fill="#fde9e3" stroke="#c43e1c" stroke-width=".6"/>'};
+
+  // Image
+  if (m.includes('image') || ['jpg','jpeg','png','gif','webp','svg','bmp','ico'].includes(ext))
+    return { color:'#0078d4', label:'IMG', svg:
+      '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#e8f4fc" stroke="#0078d4" stroke-width=".8"/>'
+      +'<circle cx="6" cy="6" r="1.5" fill="#f0c419"/>'
+      +'<polyline points="3,12 6,8 9,10.5 11,7.5 13,11" fill="none" stroke="#0078d4" stroke-width="1" stroke-linejoin="round"/>'};
+
+  // Video
+  if (m.includes('video') || ['mp4','mov','avi','mkv','webm'].includes(ext))
+    return { color:'#5c2d91', label:'VID', svg:
+      '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#f3eef9" stroke="#5c2d91" stroke-width=".8"/>'
+      +'<rect x="3.5" y="5" width="9" height="6" rx=".8" fill="#5c2d91"/>'
+      +'<polygon points="7,6.5 10,8 7,9.5" fill="#fff"/>'};
+
+  // Audio
+  if (m.includes('audio') || ['mp3','wav','aac','ogg','m4a'].includes(ext))
+    return { color:'#00b7c3', label:'AUD', svg:
+      '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#e6fafa" stroke="#00b7c3" stroke-width=".8"/>'
+      +'<circle cx="8" cy="8" r="3.5" fill="none" stroke="#00b7c3" stroke-width="1"/>'
+      +'<circle cx="8" cy="8" r="1.2" fill="#00b7c3"/>'
+      +'<line x1="8" y1="4" x2="8" y2="2.5" stroke="#00b7c3" stroke-width="1"/>'};
+
+  // Zip / Archive
+  if (m.includes('zip') || ['zip','rar','7z','tar','gz'].includes(ext))
+    return { color:'#ca5010', label:'ZIP', svg:
+      '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#fff8f5" stroke="#ca5010" stroke-width=".8"/>'
+      +'<rect x="6.5" y="1" width="3" height="14" fill="#fde8d8"/>'
+      +'<line x1="6.5" y1="3" x2="9.5" y2="3" stroke="#ca5010" stroke-width=".7"/>'
+      +'<line x1="6.5" y1="5" x2="9.5" y2="5" stroke="#ca5010" stroke-width=".7"/>'
+      +'<line x1="6.5" y1="7" x2="9.5" y2="7" stroke="#ca5010" stroke-width=".7"/>'
+      +'<line x1="6.5" y1="9" x2="9.5" y2="9" stroke="#ca5010" stroke-width=".7"/>'};
+
+  // Text / default
+  return { color:'#6e6e6e', label:'FILE', svg:
+    '<rect x="2" y="1" width="12" height="14" rx="1.5" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>'
+    +'<polyline points="9,1 9,5 13,5" fill="#f0f0f0" stroke="#e0e0e0" stroke-width=".7"/>'
+    +'<line x1="4.5" y1="7.5" x2="11.5" y2="7.5" stroke="#ccc" stroke-width=".8"/>'
+    +'<line x1="4.5" y1="9.5" x2="11.5" y2="9.5" stroke="#ccc" stroke-width=".8"/>'
+    +'<line x1="4.5" y1="11.5" x2="11.5" y2="11.5" stroke="#ccc" stroke-width=".8"/>'
+    +'<line x1="4.5" y1="13.5" x2="9" y2="13.5" stroke="#ccc" stroke-width=".8"/>'};
+}
+
+function _fileIconSvg(mime, name) {
+  const ic = _fileWinIcon(mime, name);
+  return '<svg width="28" height="32" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">'
+    + ic.svg + '</svg>';
+}
+
+// מיון קבצים
+let _fileSort = 'date'; // 'name' | 'sender' | 'date' | 'type'
+
+function _sortFiles(files) {
+  return [...files].sort((a, b) => {
+    if (_fileSort === 'name') {
+      return (a.name||'').localeCompare(b.name||'', 'he');
+    } else if (_fileSort === 'sender') {
+      const as = a.source?.senderName || a.source?.senderEmail || a.senderName || '';
+      const bs = b.source?.senderName || b.source?.senderEmail || b.senderName || '';
+      return as.localeCompare(bs, 'he');
+    } else if (_fileSort === 'type') {
+      const ae = (a.name||'').split('.').pop().toLowerCase();
+      const be = (b.name||'').split('.').pop().toLowerCase();
+      return ae.localeCompare(be);
+    } else { // date
+      const ad = a.source?.date || a.sentDate || a.detectedAt || a.createdAt || '';
+      const bd = b.source?.date || b.sentDate || b.detectedAt || b.createdAt || '';
+      return bd.localeCompare(ad); // חדש קודם
+    }
+  });
+}
+
+function _fileGroupKey(file, sort) {
+  if (sort === 'name') {
+    const first = (file.name || '?')[0].toUpperCase();
+    // אות עברית / לטינית / מספר
+    if (/[א-ת]/.test(first)) return first;
+    if (/[A-Z]/.test(first)) return first;
+    if (/[0-9]/.test(first)) return '0–9';
+    return '#';
+  }
+  if (sort === 'sender') {
+    const s = file.source?.senderName || file.source?.senderEmail || file.senderName || file.sender || '';
+    return s || 'ללא שולח';
+  }
+  if (sort === 'type') {
+    const ext = ((file.name || '').match(/\.([a-zA-Z0-9]{1,6})$/) || [])[1]?.toUpperCase() || '';
+    return ext || 'אחר';
+  }
+  // date
+  const raw = file.source?.date || file.sentDate || file.detectedAt || file.createdAt;
+  if (!raw) return 'ללא תאריך';
+  const d = new Date(raw);
+  return d.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+}
+
+// ── נרמול קובץ — תמיכה בשני פורמטים ─────────────────────
+function _normalizeFile(raw) {
+  if (!raw) return null;
+  const hasSrc = !!(raw.source || raw.sizeBytes !== undefined);
+  if (hasSrc) {
+    const src = raw.source || {};
+    const name = raw.name || raw.systemName || raw.physicalName || src.subject || 'קובץ';
+    return {
+      name,
+      ext:              (name.split('.').pop() || '').toLowerCase(),
+      mimeType:         raw.mimeType || 'application/octet-stream',
+      sizeBytes:        raw.sizeBytes || raw.size || 0,
+      gmailMessageId:   raw.gmailMessageId || src.messageId || null,
+      gmailAttachmentId:raw.gmailAttachmentId || raw.attachmentId || null,
+      messageId:        raw.gmailMessageId || src.messageId || null,
+      attachmentId:     raw.gmailAttachmentId || raw.attachmentId || null,
+      threadId:         raw.threadId || src.threadId || null,
+      senderName:       src.senderName || raw.senderName || raw.sender || null,
+      senderEmail:      src.senderEmail || raw.senderEmail || null,
+      date:             src.date || raw.sentDate || raw.detectedAt || raw.createdAt || null,
+      driveFileId:      raw.driveFileId || raw.driveId || null,
+      webViewLink:      raw.webViewLink || null,
+    };
+  }
+  const name = raw.filename || raw.name || raw.systemName || raw.physicalName || 'קובץ';
+  return {
+    name,
+    ext:              (name.split('.').pop() || '').toLowerCase(),
+    mimeType:         raw.mimeType || 'application/octet-stream',
+    sizeBytes:        raw.size || raw.sizeBytes || 0,
+    gmailMessageId:   raw.messageId || null,
+    gmailAttachmentId:raw.attachmentId || null,
+    messageId:        raw.messageId || null,
+    attachmentId:     raw.attachmentId || null,
+    threadId:         raw.threadId || null,
+    senderName:       raw.senderName || raw.fromName || raw.sender || null,
+    senderEmail:      raw.senderEmail || raw.fromEmail || null,
+    date:             raw.date || raw.sentDate || null,
+    driveFileId:      raw.driveFileId || raw.driveId || null,
+    webViewLink:      raw.webViewLink || null,
+  };
+}
+
+// ── שליפת buffer מ-Gmail API ──────────────────────────────
+async function _fetchGmailBuffer(file) {
+  const msgId = file.gmailMessageId || file.messageId;
+  const attId = file.gmailAttachmentId || file.attachmentId;
+  if (!msgId || !attId) throw new Error('חסרים פרטי Gmail');
+  const r = await fetch(
+    'https://gmail.googleapis.com/gmail/v1/users/me/messages/' + msgId + '/attachments/' + attId,
+    { headers: { Authorization: 'Bearer ' + state.token } }
+  );
+  if (!r.ok) throw new Error('Gmail API ' + r.status);
+  const data = await r.json();
+  const b64raw = (data.data || '').replace(/-/g,'+').replace(/_/g,'/');
+  const b64    = b64raw.padEnd(b64raw.length + (4 - b64raw.length % 4) % 4, '=');
+  const bin    = atob(b64);
+  const u8     = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return { buffer: u8.buffer, mime: file.mimeType || 'application/octet-stream' };
+}
+
+// ── תצוגה מוקדמת של קובץ ──────────────────────────────────
+function _showFilePreview(rawFile) {
+  const file = _normalizeFile(rawFile);
+  if (!file) return;
+
+  const ext  = file.ext;
+  const mime = file.mimeType;
+  const sizeB = file.sizeBytes || 0;
+  const size  = sizeB > 0 ? (sizeB > 1048576 ? (sizeB/1048576).toFixed(1)+'MB' : Math.round(sizeB/1024)+'KB') : '';
+  const date  = file.date ? new Date(file.date).toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+
+  // קישור לפתיחה ב-Drive / Gmail
+  const viewLink = file.webViewLink
+    || (file.driveFileId ? 'https://drive.google.com/file/d/'+file.driveFileId+'/view' : '')
+    || (file.threadId    ? 'https://mail.google.com/mail/u/0/#inbox/'+file.threadId    : '');
+
+  // Drive embed URL — משמש לכל הקבצים שנמצאים ב-Drive
+  const drivePreviewUrl = file.driveFileId
+    ? 'https://drive.google.com/file/d/'+file.driveFileId+'/preview'
+    : (file.webViewLink ? file.webViewLink.replace(/\/view(\?.*)?$/, '/preview') : null);
+
+  const _isPdf  = ext === 'pdf' || mime === 'application/pdf';
+  const _isImg  = ['jpg','jpeg','png','gif','webp','bmp','svg','heic'].includes(ext) || mime.startsWith('image/');
+  const _isWord = ['docx','odt'].includes(ext);
+  const _isDoc  = ext === 'doc';
+  const _isXls  = ['xls','xlsx','csv'].includes(ext);
+  const _isPpt  = ['ppt','pptx','odp'].includes(ext);
+  const _isTxt  = ['txt','rtf','md','json','xml','html','htm','css','js','ts','py'].includes(ext);
+
+  // icon & label
+  const _ICONS = { pdf:'📕', doc:'📘', docx:'📘', xls:'📗', xlsx:'📗', csv:'📗',
+                   ppt:'📙', pptx:'📙', jpg:'🖼️', jpeg:'🖼️', png:'🖼️', gif:'🖼️',
+                   webp:'🖼️', heic:'🖼️', mp4:'🎬', mov:'🎬', mp3:'🎵', wav:'🎵',
+                   zip:'📦', rar:'📦', txt:'📝', rtf:'📝', md:'📝', eml:'📧' };
+  const iconLabel = _ICONS[ext] || '📎';
+
+  // meta rows
+  const metaRows =
+    (file.senderName ? '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--surface2);font-size:13px;"><span style="color:var(--text-3);min-width:56px;">שולח</span><span style="font-weight:500;">'+esc(file.senderName)+'</span></div>' : '')
+    + (date           ? '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--surface2);font-size:13px;"><span style="color:var(--text-3);min-width:56px;">תאריך</span><span style="font-weight:500;">'+date+'</span></div>' : '')
+    + (size           ? '<div style="display:flex;gap:10px;padding:8px 0;font-size:13px;"><span style="color:var(--text-3);min-width:56px;">גודל</span><span style="font-weight:500;">'+size+'</span></div>' : '');
+
+  document.getElementById('file-preview-overlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'file-preview-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease;';
+
+  overlay.innerHTML =
+    '<div id="file-preview-card" style="background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:88vh;display:flex;flex-direction:column;animation:slideUp .25s ease;">'
+      + '<div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;flex-shrink:0;"></div>'
+      + '<div style="display:flex;align-items:center;gap:12px;padding:14px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">'
+          + '<span style="font-size:28px;">'+iconLabel+'</span>'
+          + '<div style="flex:1;min-width:0;">'
+            + '<div style="font-size:15px;font-weight:700;line-height:1.3;word-break:break-word;">'+esc(file.name.replace(/\.[^.]+$/, ''))+'</div>'
+            + '<div style="font-size:11px;color:var(--text-3);margin-top:2px;">'+ext.toUpperCase()+(size?' · '+size:'')+'</div>'
+          + '</div>'
+          + '<button onclick="document.getElementById(\'file-preview-overlay\').remove()" style="width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);font-size:16px;cursor:pointer;flex-shrink:0;">✕</button>'
+      + '</div>'
+      + '<div id="fp-preview-zone" style="overflow-y:auto;padding:14px 20px;flex:1;">'
+          + '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;color:var(--text-3);gap:10px;">'
+            + '<div class="spinner"></div><span style="font-size:13px;">טוען תצוגה מוקדמת...</span>'
+          + '</div>'
+      + '</div>'
+      + '<div style="padding:10px 20px 28px;flex-shrink:0;">'
+          + (viewLink
+            ? '<a href="'+esc(viewLink)+'" target="_blank" rel="noopener" style="display:block;padding:13px;border-radius:12px;background:var(--accent);color:white;font-size:14px;font-weight:700;text-align:center;text-decoration:none;font-family:var(--sans);">פתח ב-Drive ↗</a>'
+            : '<div style="padding:13px;border-radius:12px;background:var(--surface2);color:var(--text-3);font-size:14px;font-weight:600;text-align:center;">אין קישור זמין</div>')
+      + '</div>'
+    + '</div>';
+
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+
+  const zone = document.getElementById('fp-preview-zone');
+  function _done(html) { if (zone) zone.innerHTML = html + metaRows; }
+  function _noPreview(reason) {
+    _done('<div style="background:var(--surface2);border-radius:10px;padding:24px;text-align:center;margin-bottom:12px;">'
+      + '<div style="font-size:40px;margin-bottom:8px;">'+iconLabel+'</div>'
+      + '<div style="font-size:13px;color:var(--text-2);">'+esc(reason||'לא ניתן להציג תצוגה מוקדמת')+'</div>'
+      + '</div>');
+  }
+
+  // ════ Drive embed — עובד על כל מכשיר, כל פורמט ════
+  if (drivePreviewUrl) {
+    _done('<div style="border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px;">'
+        + '<iframe src="'+esc(drivePreviewUrl)+'" '
+        + 'style="width:100%;height:340px;border:none;display:block;" '
+        + 'sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation" '
+        + 'allow="autoplay;fullscreen" title="תצוגת קובץ">'
+        + '</iframe>'
+      + '</div>');
+    return;
+  }
+
+  // ════ ללא driveId — שולף מ-Gmail ומעלה ל-Drive זמנית ════
+  // Google Drive Preview iframe עובד על כל מכשיר (PC, Android, iOS)
+  // לכל סוגי הקבצים (PDF, Word, Excel, PPT, תמונות)
+  (async () => {
+    const msgId = file.gmailMessageId || file.messageId;
+    const attId = file.gmailAttachmentId || file.attachmentId;
+
+    if (!msgId || !attId) {
+      _noPreview('אין מידע מיקום לקובץ זה');
+      return;
+    }
+
+    try {
+      // שלב 1: שלוף bytes מ-Gmail
+      const { buffer, mime: fetchedMime } = await _fetchGmailBuffer(file);
+
+      // שלב 2: תמונה — לא צריך Upload, blob ישירות
+      if (_isImg) {
+        const blob    = new Blob([buffer], { type: fetchedMime });
+        const blobUrl = URL.createObjectURL(blob);
+        _done('<div style="background:#111;border-radius:10px;overflow:hidden;margin-bottom:12px;'
+            + 'display:flex;align-items:center;justify-content:center;min-height:160px;">'
+            + '<img src="'+blobUrl+'" style="max-width:100%;max-height:320px;object-fit:contain;display:block;">'
+            + '</div>');
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 300000);
+        return;
+      }
+
+      // שלב 3: טקסט — ישירות מה-buffer
+      if (_isTxt) {
+        const text = new TextDecoder('utf-8').decode(buffer);
+        _done('<div style="background:#1e1e1e;border-radius:10px;padding:16px;margin-bottom:12px;max-height:340px;overflow-y:auto;">'
+            + '<pre style="margin:0;font-size:12px;color:#d4d4d4;font-family:monospace;white-space:pre-wrap;word-break:break-all;">'
+            + esc(text.slice(0, 5000)) + (text.length > 5000 ? '\n\n[...]' : '')
+            + '</pre></div>');
+        return;
+      }
+
+      // שלב 4: PDF, Word, Excel — העלה ל-Drive → Drive Preview
+      if (_isPdf || _isWord || _isDoc || _isXls || _isPpt) {
+        if (zone) zone.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;'
+          + 'justify-content:center;padding:24px;color:var(--text-3);gap:10px;">'
+          + '<div class="spinner"></div>'
+          + '<span style="font-size:13px;">מעלה לתצוגה מוקדמת...</span>'
+          + '</div>' + metaRows;
+
+        const tempId = await _uploadToDriveTemp(buffer, fetchedMime, file.name);
+
+        if (tempId) {
+          const previewUrl = 'https://drive.google.com/file/d/' + tempId + '/preview';
+          if (zone) zone.innerHTML =
+            '<div style="border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px;">'
+              + '<iframe src="' + previewUrl + '" '
+              + 'style="width:100%;height:380px;border:none;display:block;" '
+              + 'sandbox="allow-scripts allow-same-origin allow-forms allow-popups" '
+              + 'allow="autoplay" title="תצוגת קובץ">'
+              + '</iframe>'
+            + '</div>' + metaRows;
+          // מחק אחרי 10 דקות
+          setTimeout(() => _deleteDriveTemp(tempId), 600000);
+          return;
+        }
+
+        // Fallback אם ה-upload נכשל
+        _noPreview('לא הצלחנו לטעון את הקובץ לתצוגה');
+        return;
+      }
+
+      // Fallback: כפתור הורדה
+      const blob    = new Blob([buffer], { type: fetchedMime });
+      const blobUrl = URL.createObjectURL(blob);
+      _done('<div style="background:var(--surface2);border-radius:10px;padding:24px;text-align:center;margin-bottom:12px;">'
+          + '<div style="font-size:40px;margin-bottom:10px;">'+iconLabel+'</div>'
+          + '<div style="font-size:13px;color:var(--text-2);margin-bottom:16px;">לחץ להורדת הקובץ</div>'
+          + '<a href="'+blobUrl+'" download="'+esc(file.name)+'" '
+          + 'style="display:inline-block;padding:11px 24px;border-radius:10px;background:var(--accent);'
+          + 'color:white;font-size:14px;font-weight:700;text-decoration:none;font-family:var(--sans);">⬇ הורד קובץ</a>'
+          + '</div>');
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+
+    } catch(e) {
+      console.error('_showFilePreview error:', e);
+      _noPreview('שגיאה בטעינת הקובץ: ' + e.message);
+    }
+  })();
+}
+
+// ── העלאת קובץ זמנית ל-Drive לצורך תצוגה מוקדמת ───────────
+async function _uploadToDriveTemp(buffer, mimeType, filename) {
+  try {
+    const boundary = 'fp_temp_' + Date.now();
+    const safeName = (filename || 'preview').replace(/[\\/<>:"|?*]/g, '_');
+
+    const meta = JSON.stringify({
+      name: '__preview_' + safeName,
+      parents: [state.systemFolderId || 'root']
+    });
+
+    const body = [
+      '--' + boundary,
+      'Content-Type: application/json; charset=UTF-8',
+      '',
+      meta,
+      '--' + boundary,
+      'Content-Type: ' + (mimeType || 'application/octet-stream'),
+      '',
+      ''
+    ].join('\r\n');
+
+    const bodyBytes = new TextEncoder().encode(body);
+    const endBytes  = new TextEncoder().encode('\r\n--' + boundary + '--');
+    const full      = new Uint8Array(bodyBytes.length + buffer.byteLength + endBytes.length);
+    full.set(bodyBytes, 0);
+    full.set(new Uint8Array(buffer), bodyBytes.length);
+    full.set(endBytes, bodyBytes.length + buffer.byteLength);
+
+    const r = await fetch(
+      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + state.token,
+          'Content-Type': 'multipart/related; boundary=' + boundary
+        },
+        body: full
+      }
+    );
+    if (!r.ok) { console.warn('_uploadToDriveTemp failed:', r.status); return null; }
+    const data = await r.json();
+    return data.id || null;
+  } catch(e) {
+    console.warn('_uploadToDriveTemp error:', e.message);
+    return null;
+  }
+}
+
+// ── מחיקת קובץ זמני מ-Drive ─────────────────────────────────
+async function _deleteDriveTemp(fileId) {
+  try {
+    await fetch('https://www.googleapis.com/drive/v3/files/' + fileId, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + state.token }
+    });
+    console.log('[Preview] temp file deleted:', fileId);
+  } catch(e) { console.warn('_deleteDriveTemp:', e.message); }
+}
+
+// ── renderDetailFiles ─────────────────────────────────────
+async function renderDetailFiles(c, f) {
+  c.innerHTML = '<div class="loading"><div class="spinner"></div><span>טוען קבצים...</span></div>';
+
+  if (!f.driveFolderId) {
+    c.innerHTML = '<div class="empty"><div class="empty-icon">📁</div>'
+      + '<div class="empty-title">אין תיקיית Drive לפרויקט</div></div>';
+    return;
+  }
+
+  try {
+    const q = encodeURIComponent(
+      "'" + f.driveFolderId + "' in parents and name='files.json' and trashed=false"
+    );
+    const search = await driveGet(
+      'files?q=' + q + '&fields=files(id)&pageSize=1&orderBy=modifiedTime+desc'
+    );
+
+    if (!search.files?.length) {
+      c.innerHTML = '<div class="empty"><div class="empty-icon">📎</div>'
+        + '<div class="empty-title">אין קבצים</div>'
+        + '<div class="empty-sub">קבצים שיצורפו למיילים בפרויקט יופיעו כאן</div></div>';
+      return;
+    }
+
+    const data         = await driveGetFile(search.files[0].id);
+    const files        = (data.files || []).filter(f2 => !f2.hidden && !f2.hiddenReason);
+    const expectedFiles = (data.expectedFiles || []);
+
+    if (!files.length && !expectedFiles.length) {
+      c.innerHTML = '<div class="empty"><div class="empty-icon">📎</div>'
+        + '<div class="empty-title">אין קבצים עדיין</div>'
+        + '<div class="empty-sub">קבצים שיצורפו למיילים בפרויקט יופיעו כאן</div></div>';
+      return;
+    }
+
+    // ── שמור קבצים לשימוש חוזר בעת שינוי מיון ──
+    c._filesData        = files;
+    c._expectedFilesData = expectedFiles;
+    c._projectRef       = f;
+
+    _renderFilesContent(c);
+
+  } catch(e) {
+    console.error('renderDetailFiles error:', e);
+    c.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>'
+      + '<div class="empty-title">שגיאה בטעינת קבצים</div>'
+      + '<div class="empty-sub">' + esc(e.message) + '</div></div>';
+  }
+}
+
+function _renderFilesContent(c) {
+  const files         = c._filesData || [];
+  const expectedFiles = c._expectedFilesData || [];
+  const sorted        = _sortFiles(files);
+
+  // ── שורת מיון ──
+  const sortBtns = ['name','sender','date','type'].map(s => {
+    const labels = {name:'שם', sender:'שולח', date:'תאריך', type:'סוג'};
+    const active = _fileSort === s;
+    return '<button onclick="_fileSort=\''+s+'\';_renderFilesContent(document.getElementById(\'detail-content\'))" '
+      + 'style="padding:4px 10px;border-radius:14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);'
+      + 'border:1.5px solid '+(active?'var(--accent)':'var(--border)')+';'
+      + 'background:'+(active?'rgba(26,115,232,.08)':'white')+';'
+      + 'color:'+(active?'var(--accent)':'var(--text-2)')+';">'+labels[s]+'</button>';
+  }).join('');
+
+  const sortBar = '<div style="display:flex;align-items:center;gap:6px;padding:10px 16px 8px;background:white;border-bottom:1px solid var(--border);">'
+    + '<span style="font-size:11px;color:var(--text-3);font-weight:600;">מיון:</span>'
+    + sortBtns
+    + '</div>';
+
+  let html = sortBar;
+
+  // ── קבצים שהתקבלו — עם כותרות קיבוץ ──
+  if (sorted.length) {
+    let lastGroup = null;
+    const rows = sorted.map(file => {
+      const name     = file.name || file.systemName || file.physicalName || 'קובץ';
+      const baseName = _fileBaseName(name);
+      const iconSvg  = _fileIconSvg(file.mimeType, name);
+      const sender   = file.source?.senderName || file.source?.senderEmail
+                     || file.senderName || file.sender || '';
+      const rawDate  = file.source?.date || file.sentDate || file.detectedAt || file.createdAt;
+      const date     = rawDate
+        ? new Date(rawDate).toLocaleDateString('he-IL', {day:'2-digit',month:'2-digit',year:'2-digit'})
+        : '';
+      const sizeB    = file.sizeBytes || file.size || 0;
+      const size     = sizeB > 0
+        ? (sizeB > 1048576 ? Math.round(sizeB/1048576)+'MB' : Math.round(sizeB/1024)+'KB')
+        : '';
+
+      const key = 'fpr_' + Math.random().toString(36).slice(2,8);
+      window[key] = file;
+
+      // כותרת קבוצה
+      const groupKey = _fileGroupKey(file, _fileSort);
+      let groupHeader = '';
+      if (groupKey !== lastGroup) {
+        lastGroup = groupKey;
+        groupHeader =
+          '<div style="padding:7px 14px 5px;background:var(--surface2);border-bottom:1px solid var(--border);'
+          + 'font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.4px;">'
+          + esc(groupKey) + '</div>';
+      }
+
+      const row = '<div onclick="_showFilePreview(window[\''+key+'\'])" '
+        + 'style="display:flex;align-items:center;gap:10px;padding:10px 14px;'
+        + 'border-bottom:1px solid var(--surface2);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s;"'
+        + 'onmouseenter="this.style.background=\'#f8f9fa\'" onmouseleave="this.style.background=\'\'">'
+        + iconSvg
+        + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--accent);">'
+            + esc(baseName)
+          + '</div>'
+          + '<div style="display:flex;gap:8px;margin-top:3px;align-items:center;flex-wrap:wrap;">'
+            + (sender ? '<span style="font-size:12px;color:var(--text-2);">'+esc(sender)+'</span>' : '')
+            + (date   ? '<span style="font-size:11px;color:var(--text-3);background:var(--surface2);padding:2px 6px;border-radius:4px;">'+date+'</span>' : '')
+            + (size   ? '<span style="font-size:11px;color:var(--text-3);">'+size+'</span>' : '')
+          + '</div>'
+        + '</div>'
+        + '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;color:var(--text-3);"><polyline points="6,3 11,8 6,13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        + '</div>';
+
+      return groupHeader + row;
+    }).join('');
+
+    html += '<div class="detail-section">'
+      + '<div class="detail-section-title">📎 קבצים שהתקבלו (' + sorted.length + ')</div>'
+      + '<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">'
+      + rows + '</div></div>';
+  }
+
+  // ── קבצים מצופים (ללא שינוי) ──
+  if (expectedFiles.length) {
+    const rows = expectedFiles.map(ef => {
+      const status  = ef.status === 'received' ? '✅' : ef.status === 'overdue' ? '❌' : '⏳';
+      const dueDate = ef.dueDate
+        ? new Date(ef.dueDate).toLocaleDateString('he-IL', {day:'2-digit',month:'2-digit'})
+        : '';
+      const from    = ef.expectedFrom?.name || ef.expectedFrom?.email || '';
+
+      return '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;'
+        + 'border-bottom:1px solid var(--surface2);">'
+        + '<div style="font-size:20px;flex-shrink:0;">' + status + '</div>'
+        + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-size:14px;font-weight:600;">' + esc(ef.name || 'קובץ מצופה') + '</div>'
+          + '<div style="display:flex;gap:6px;margin-top:2px;flex-wrap:wrap;">'
+            + (from    ? '<span style="font-size:11px;color:var(--text-2);">👤 '+esc(from)+'</span>' : '')
+            + (dueDate ? '<span style="font-size:11px;color:var(--text-3);">עד '+dueDate+'</span>' : '')
+          + '</div>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+
+    html += '<div class="detail-section">'
+      + '<div class="detail-section-title">📬 קבצים מצופים (' + expectedFiles.length + ')</div>'
+      + '<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">'
+      + rows + '</div></div>';
+  }
+
+  c.innerHTML = html;
+}
+
+
+
+</script>
+</body>
+</html>
