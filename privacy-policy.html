@@ -1,420 +1,401 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy Policy — InboxUnleash</title>
 <style>
-  :root {
-    --bg: #ffffff;
-    --text: #202124;
-    --muted: #5f6368;
-    --accent: #1a73e8;
-    --border: #e8eaed;
-    --code-bg: #f1f3f4;
-  }
-  * { box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    margin: 0;
-    padding: 0;
-    line-height: 1.65;
-  }
-  main {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
-  h1 { font-size: 2.2rem; margin: 0 0 8px; }
-  h2 {
-    font-size: 1.35rem;
-    margin: 40px 0 12px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
-  h3 { font-size: 1.05rem; margin: 24px 0 8px; }
-  p, li { font-size: 1rem; }
-  .meta {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin: 0 0 32px;
-  }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  code {
-    background: var(--code-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: "SF Mono", Consolas, monospace;
-    font-size: 0.9em;
-  }
-  ul { padding-left: 22px; }
-  li { margin-bottom: 6px; }
-  .highlight {
-    background: #e8f0fe;
-    border-left: 4px solid var(--accent);
-    padding: 16px 20px;
-    border-radius: 4px;
-    margin: 20px 0;
-  }
-  .scope-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0;
-    font-size: 0.95rem;
-  }
-  .scope-table th, .scope-table td {
-    text-align: left;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    vertical-align: top;
-  }
-  .scope-table th {
-    background: var(--code-bg);
-    font-weight: 600;
-  }
-  .lang-switch {
-    display: inline-block;
-    margin-bottom: 24px;
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-  .lang-switch a { color: var(--accent); }
-  footer {
-    margin-top: 60px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
+:root {
+--bg: #ffffff;
+--text: #202124;
+--muted: #5f6368;
+--accent: #1a73e8;
+--border: #e8eaed;
+--code-bg: #f1f3f4;
+}
+* { box-sizing: border-box; }
+body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+background: var(--bg);
+color: var(--text);
+margin: 0;
+padding: 0;
+line-height: 1.7;
+}
+main {
+max-width: 760px;
+margin: 0 auto;
+padding: 48px 24px 80px;
+}
+h1 { font-size: 2.2rem; margin: 0 0 8px; }
+h2 {
+font-size: 1.35rem;
+margin: 40px 0 12px;
+padding-bottom: 6px;
+border-bottom: 1px solid var(--border);
+}
+h3 { font-size: 1.05rem; margin: 24px 0 8px; }
+p, li { font-size: 1rem; }
+.meta { color: var(--muted); font-size: 0.9rem; margin: 0 0 32px; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code {
+background: var(--code-bg);
+padding: 2px 6px;
+border-radius: 4px;
+font-family: "SF Mono", Consolas, monospace;
+font-size: 0.9em;
+}
+ul { padding-left: 22px; }
+li { margin-bottom: 6px; }
+.highlight {
+background: #e8f0fe;
+border-left: 4px solid var(--accent);
+padding: 16px 20px;
+border-radius: 4px;
+margin: 20px 0;
+}
+.scope-table {
+width: 100%;
+border-collapse: collapse;
+margin: 16px 0;
+font-size: 0.95rem;
+}
+.scope-table th, .scope-table td {
+text-align: left;
+padding: 10px 12px;
+border: 1px solid var(--border);
+vertical-align: top;
+}
+.scope-table th { background: var(--code-bg); font-weight: 600; }
+.lang-switch { display: inline-block; margin-bottom: 24px; font-size: 0.9rem; color: var(--muted); }
+footer {
+margin-top: 60px;
+padding-top: 24px;
+border-top: 1px solid var(--border);
+color: var(--muted);
+font-size: 0.9rem;
+}
 </style>
 </head>
 <body>
 <main>
 
 <div class="lang-switch">
-  <a href="privacy-policy-he.html">גרסה עברית</a>
+<a href="privacy-policy-he.html">גרסה בעברית</a>
 </div>
 
 <h1>Privacy Policy</h1>
-<p class="meta">Last updated: June 16, 2026</p>
+<p class="meta">Last updated: October 12, 2026</p>
 
 <p>
-  This Privacy Policy describes how <strong>InboxUnleash</strong> (the "Extension", "we", "us") handles your information.
-  InboxUnleash is a Chrome browser extension that operates inside Gmail to help small business owners organize emails,
-  contacts, files, and tasks, and to manage customer conversations through a lightweight one-way CRM — all without
-  ever leaving Gmail.
+This Privacy Policy explains how <strong>InboxUnleash</strong> ("the extension", "we") handles your information.
+InboxUnleash is a Chrome extension that runs inside Gmail and helps small-business owners organize emails,
+contacts, files, tasks and collections, and manage client conversations with a lightweight one-way CRM — without
+leaving Gmail. We wrote this document to be open and detailed: what the extension does, where your data goes, and when.
 </p>
 
 <div class="highlight">
-  <strong>The short version:</strong> InboxUnleash runs locally in your browser. We do not operate any server that
-  receives your email content, tasks, or files. We do not sell, share, or transmit your data to any third party.
-  We do not send your data to artificial intelligence models. Your data stays between you, Google, and your own browser.
+<strong>The short version:</strong>
+<ul style="margin: 8px 0 0;">
+<li>InboxUnleash runs in your browser against your own Google account. <strong>We do not operate a server that receives the content of your emails, files or tasks.</strong></li>
+<li>We do not sell your data, we do not use it for advertising, and we do not use your Google data to train AI models.</li>
+<li><strong>AI and transcription features are optional.</strong> Only when you turn them on, and only after your explicit consent, selected content is sent <strong>directly from your browser</strong> to an outside provider: Google Gemini (using your own API key), Groq (using your own API key), or Chrome's speech recognition service.</li>
+<li>Usage data reaches us only if you send it manually, by clicking a button, after previewing what will be sent.</li>
+<li>You can delete all data the extension created at any time.</li>
+</ul>
 </div>
 
-<h2>1. Who We Are</h2>
-<p>
-  InboxUnleash is developed by <strong>InboxUnleash Tech Solutions</strong>, an independent developer studio.
-</p>
-<p>
-  For general questions or support:
-  <a href="mailto:inboxunleash@gmail.com">inboxunleash@gmail.com</a>
-</p>
-<p>
-  For bug reports or feature suggestions:
-  <a href="mailto:inboxunleash.feedback@gmail.com">inboxunleash.feedback@gmail.com</a>
-</p>
-<p>
-  For privacy-specific inquiries, data access requests, or data deletion requests:
-  <a href="mailto:inboxunleash.privacy@gmail.com">inboxunleash.privacy@gmail.com</a>
-</p>
+<h2>1. Who we are</h2>
+<p>InboxUnleash is developed by <strong>InboxUnleash Tech Solutions</strong>, an independent development studio.</p>
+<p>General questions or support: <a href="mailto:inboxunleash@gmail.com">inboxunleash@gmail.com</a></p>
+<p>Bug reports or feature requests: <a href="mailto:inboxunleash.feedback@gmail.com">inboxunleash.feedback@gmail.com</a></p>
+<p>Privacy inquiries, data-access requests or deletion requests: <a href="mailto:inboxunleash.privacy@gmail.com">inboxunleash.privacy@gmail.com</a></p>
 
-<h2>2. Information We Access</h2>
+<h2>2. Information we access</h2>
 <p>
-  InboxUnleash uses the following Google API scopes. We access this information solely to provide the features
-  visible to you in the Extension's interface.
+InboxUnleash uses the following Google API scopes. We access this information only to provide the features you
+see in the extension's interface.
 </p>
 
 <table class="scope-table">
-  <thead>
-    <tr>
-      <th>Google Scope</th>
-      <th>What It Allows</th>
-      <th>Why We Use It</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>gmail.modify</code></td>
-      <td>Read, modify, and send Gmail messages, threads, and labels (but not permanently delete them).</td>
-      <td>To display emails inside smart folders, organize threads, read your existing Gmail labels so you can use
-          them as criteria when defining smart folders, apply labels, archive threads you select, and send emails
-          on your behalf in response to explicit user actions (see Section 4 for details). The Extension reads
-          labels only — it does not create new Gmail labels on its own. The Extension never sends emails
-          automatically without your explicit click.</td>
-    </tr>
-    <tr>
-      <td><code>contacts.readonly</code></td>
-      <td>Read your Google Contacts (names, email addresses, photos).</td>
-      <td>Primarily, to let you search for and select contacts when defining smart folder criteria (for example,
-          a folder that collects all emails from a specific client). Also used to assign tasks to contacts, and
-          to display contact names and avatars in smart folders, conversations, and team views.</td>
-    </tr>
-    <tr>
-      <td><code>drive.file</code></td>
-      <td>Create and manage <em>only</em> files the Extension itself creates in your Google Drive.</td>
-      <td>The Extension stores your folder configuration and settings in your own Drive so they persist across
-          devices. It cannot read or access any other Drive files.</td>
-    </tr>
-    <tr>
-      <td><code>calendar</code></td>
-      <td>Read and create events on your Google Calendar, including events with Google Meet video links.</td>
-      <td>To display upcoming events alongside related email threads, to create calendar entries from tasks and
-          meetings discussed in email, to create reminders and meetings linked to tasks you create in the Extension,
-          and to attach Google Meet video links to events when you request them.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr><th>Google scope</th><th>What it allows</th><th>Why we use it</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gmail.modify</code></td>
+<td>Read, edit and send messages, threads, drafts and labels in your Gmail (but not permanent deletion).</td>
+<td>To show emails in smart folders and organize threads; to read email content (including message bodies and attachments) for search, tasks, invoice and payment detection, and the AI features you enable; to apply labels, archive threads you choose, create drafts, and send emails on your behalf (including payment reminders you set up) — see Section 4. The extension only reads existing labels; it does not create new Gmail labels on its own initiative.</td>
+</tr>
+<tr>
+<td><code>contacts.readonly</code></td>
+<td>Read your Google Contacts (names, email addresses, photos).</td>
+<td>To let you search and pick contacts when defining smart folders, to associate tasks and payments with contacts, and to display names and avatars.</td>
+</tr>
+<tr>
+<td><code>drive.file</code></td>
+<td>Create and manage <em>only</em> the files the extension itself creates in your Google Drive.</td>
+<td>The extension stores in your own Drive its settings, smart folders, tasks, file-content index, transcripts, pages you saved, and summary files you created. It cannot access any other file in your Drive.</td>
+</tr>
+<tr>
+<td><code>calendar</code></td>
+<td>Read and create events in your Google Calendar, including events with Google Meet links.</td>
+<td>To show upcoming events next to related email threads, create meetings and reminders from tasks and conversations, and attach Google Meet links when you ask.</td>
+</tr>
+</tbody>
 </table>
 
-<h2>3. How We Use Your Information</h2>
-<p>
-  All information accessed through Google APIs is used exclusively to provide the user-facing features of the
-  Extension, including:
-</p>
+<h3>Additional browser permissions</h3>
+<table class="scope-table">
+<thead><tr><th>Permission</th><th>Why it is needed</th></tr></thead>
+<tbody>
+<tr>
+<td><code>activeTab</code>, <code>scripting</code></td>
+<td>When you click "Save page" in the extension, it reads the HTML of the currently active tab only, to save a copy to your Google Drive. It does not read pages in the background or other tabs.</td>
+</tr>
+<tr>
+<td><code>offscreen</code></td>
+<td>A hidden document that extracts text from attached files (PDF, Word, Excel) so you can search their contents. Extraction runs in your browser, not on a server.</td>
+</tr>
+<tr>
+<td>Access to specific sites (optional)</td>
+<td>When you save a link to an external site, Chrome asks for your permission for that site only. We do not access sites without your approval.</td>
+</tr>
+<tr>
+<td><code>api.groq.com</code></td>
+<td>Required only for transcription through Groq (optional, see Section 7). Nothing is sent to it without a Groq key you entered and your consent.</td>
+</tr>
+<tr>
+<td><code>storage</code>, <code>identity</code>, <code>alarms</code>, <code>windows</code></td>
+<td>Local settings storage, signing in to your Google account, scheduled tasks (reminders), and opening the extension's helper windows.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>3. How we use information</h2>
+<p>All information accessed through Google APIs is used only to provide user-facing features of the extension, including:</p>
 <ul>
-  <li>Organizing emails into smart folders based on keywords, contacts, and labels you define.</li>
-  <li>Building lightweight task lists and reminders from email content.</li>
-  <li>Displaying contact information, avatars, and conversation history.</li>
-  <li>Browsing attachments across your inbox.</li>
-  <li>Showing related calendar events next to email threads.</li>
-  <li>Creating calendar reminders and meetings (including Google Meet video links) linked to tasks you create
-      in the Extension.</li>
-  <li>Sending emails on your behalf, only after explicit user action (see Section 4).</li>
-  <li>Saving your folder configuration to your own Google Drive so it persists across devices.</li>
+<li>Organizing emails into smart folders by keywords, contacts and labels you define.</li>
+<li>Building lightweight task lists and reminders from email content.</li>
+<li>Searching message contents and attachment contents (text extraction runs in your browser).</li>
+<li>Collections management: detecting invoices and payments, tracking money owed to you or by you, and sending payment reminders according to your settings.</li>
+<li>Displaying contact information, avatars and conversation history.</li>
+<li>Displaying related calendar events next to email threads, and creating events, reminders and meetings (including Google Meet).</li>
+<li>Saving web pages and links you choose to your own Google Drive.</li>
+<li>Translating text and transcribing audio files (see Sections 6–7).</li>
+<li>Remote control of the system using emails you send to yourself (see Section 4).</li>
+<li>Sending emails on your behalf only as described in Section 4.</li>
+<li>Saving your settings and data in your own Google Drive so they persist across devices.</li>
 </ul>
 
-<h2>4. Sending Emails on Your Behalf — The One-Way CRM Feature</h2>
+<h2>4. Sending emails on your behalf, and remote control</h2>
 <p>
-  InboxUnleash can send emails from your Gmail account in three specific scenarios. <strong>In all three, every
-  email is sent only after you click a 'send' button — never automatically.</strong>
+InboxUnleash can send emails from your Gmail account or create drafts in it, in the scenarios below.
+<strong>Emails to other people are sent only through an action you take or a setting you enabled and approved in
+advance (such as payment reminders, below). No such email is sent unless you turned the feature on.</strong>
 </p>
 
-<h3>Self-emails (task summaries)</h3>
-<p>
-  You can request the Extension to email yourself a summary of your tasks. The email is sent from your Gmail
-  account to your own address.
-</p>
+<h3>Emails to yourself (task summaries)</h3>
+<p>You can ask the extension to email you a summary of your tasks. The email is sent from your Gmail account to your own address.</p>
 
 <h3>Meeting invitations</h3>
+<p>You can create video meetings (via Google Meet) and send invitations to participants. The invitation is sent as a regular email from your Gmail account.</p>
+
+<h3>Payment reminders (collections)</h3>
 <p>
-  You can create video meetings (using Google Meet) and send invitations to participants. The invitation is sent
-  as a regular email from your Gmail account.
+If you enable the reminder mechanism for a particular debt, the extension sends payment reminders to the client
+or other party who owes you money <strong>automatically, from your Gmail account and in your name</strong>, according to the wording, dates and send
+time you set and approved in advance. You see the wording before approval, and in the settings you choose, per debt,
+whether to send automatically or to be asked for approval each time. Reminders may be written with AI assistance
+(see Section 7) and appear in your Sent folder. When you mark a debt as paid, reminders stop. The extension works only while your browser is open.
+</p>
+
+<h3>Remote control by email</h3>
+<p>
+If you enable this feature, you can send yourself an email whose subject starts with <code>@</code>. The extension reads it,
+performs the requested action (according to the permission level you configured) and replies to you at your own address. These emails are sent to you only.
 </p>
 
 <h3>One-way CRM conversations</h3>
 <p>
-  InboxUnleash includes a lightweight CRM (Customer Relationship Management) feature that helps you organize your
-  communications with contacts. Unlike traditional CRMs that require a separate platform, InboxUnleash builds the
-  CRM directly on top of your existing Gmail. The chat-style view is a presentation layer over normal email — it
-  is not a separate messaging protocol. Here is how it works:
+InboxUnleash includes a lightweight CRM feature (Customer Relationship Management) that helps you organize your
+communication with contacts. The chat view is a presentation layer on top of ordinary emails — it is not a separate
+messaging protocol. Here is how it works:
 </p>
 <ul>
-  <li><strong>Conversation view:</strong> Conversations with each contact are organized in a dedicated view inside
-      the Extension, which may be displayed as a chat-style interface for your convenience. This view can be used
-      to start new conversations and also to continue existing email threads that you already have with the contact.</li>
-  <li><strong>Sending messages:</strong> When you type a message in this view and click 'send', the Extension
-      sends a regular email from your Gmail account to the contact. Messages may include attachments that originated
-      as attachments in your existing Gmail emails, files you select from your own computer using your browser's
-      file picker, references to tasks you have created in the Extension, or links to meetings — exactly as you
-      would include them in a regular email.</li>
-  <li><strong>Contact's side:</strong> The contact receives a normal email and replies to it normally. They do not
-      need any special tool and may not be aware that you are using a CRM-style interface on your side.</li>
-  <li><strong>Optional auto-archiving:</strong> You may optionally configure the Extension to automatically archive
-      specific email threads — that is, remove them from your Inbox while preserving them in your Gmail's All Mail.
-      This applies only to threads you have explicitly chosen to handle this way. Archived threads remain fully
-      accessible in your Gmail and can be restored to your Inbox at any time.</li>
+<li><strong>Conversation view:</strong> Conversations with each contact are organized in a dedicated view inside the extension, which may appear as a chat-style interface for your convenience. It can be used to start new conversations and to continue existing email threads.</li>
+<li><strong>Sending messages:</strong> When you type a message in this view and click "Send", the extension sends a regular email from your Gmail account to the contact. Messages may include attachments from your existing emails, files you pick from your computer, references to tasks you created, or meeting links — exactly as you would include them in a regular email.</li>
+<li><strong>The contact's side:</strong> The contact receives and replies to an ordinary email. They need no special tool.</li>
+<li><strong>Optional auto-archive:</strong> You can configure the extension to automatically archive specific email threads — removing them from your inbox while keeping them in Gmail's All Mail. This applies only to threads you explicitly chose. Archived threads remain fully accessible in Gmail and can be moved back to the inbox at any time.</li>
 </ul>
-<p>
-  We call this approach a "one-way CRM" because it gives you CRM-style organization on your side without requiring
-  any change on the contact's side. All emails sent through this feature appear in your Gmail Sent folder like any
-  other email.
-</p>
+<p>All emails sent through the extension appear in your Gmail Sent folder like any other email.</p>
 
-<h2>5. Where Your Data Is Stored</h2>
+<h2>5. Where your data is stored</h2>
 <ul>
-  <li>
-    <strong>Locally in your browser:</strong> The Extension caches contacts, folder configurations, tasks,
-    UI state, and email metadata in your browser's local storage. Email metadata includes sender and
-    recipient addresses, subject lines, dates, and thread identifiers — but <em>not</em> the body content
-    of your emails. This data never leaves your device.
-  </li>
-  <li>
-    <strong>In your own Google Drive:</strong> Smart folder definitions and settings are saved to a dedicated
-    folder in your personal Drive. This is your data, in your account — we have no access to it.
-  </li>
-  <li>
-    <strong>In Gmail itself:</strong> All email-related data remains in your Gmail account. The Extension does
-    not extract or copy email content to any external location.
-  </li>
+<li>
+<strong>Locally in your browser:</strong> The extension stores contacts, folder configurations, tasks, interface state, and email metadata
+(sender, recipient, subject, date, thread IDs) in the browser's local storage. The extension reads message and attachment contents
+to run the features described above. The text extracted from files for search is stored in your Google Drive.
+</li>
+<li>
+<strong>In your personal Google Drive:</strong> Settings, smart folders, tasks, content index, transcripts, saved pages and a usage log (see Section 6)
+are stored in dedicated folders in your own Drive. This is your data, in your account — we have no access to it.
+</li>
+<li>
+<strong>In Gmail itself:</strong> All email-related data stays in your Gmail account.
+</li>
 </ul>
-
-<h2>6. Information We Do <em>Not</em> Collect</h2>
 <p>
-  Many extensions transmit your data to external servers for processing. <strong>InboxUnleash does not.</strong>
-  Specifically:
+We do not operate a server to which this content is copied. The only exception is sending to the outside providers described in
+Section 7 — and only when you enabled them.
 </p>
+
+<h2>6. Usage data (statistics) and feedback</h2>
 <ul>
-  <li>We do not operate any server that receives your email content, tasks, or files.</li>
-  <li>We do not send your email, contact, or calendar data to artificial intelligence or machine learning models.</li>
-  <li>We do not sell, rent, or share your data with third parties.</li>
-  <li>We do not use your data for advertising or targeting.</li>
-  <li>We do not collect analytics about your email content or behavior.</li>
-  <li>No human at our end reads your messages, files, or contacts.</li>
+<li>The extension keeps a feature-usage log <strong>only in your Google Drive</strong> (the <code>_system</code> folder), so you can see statistics about your own use.</li>
+<li><strong>We receive usage data only if you choose to send it, manually, by clicking the send button, after being shown a preview of what will be sent.</strong> It is sent as an email from your Gmail account to <a href="mailto:inboxunleash.feedback@gmail.com">inboxunleash.feedback@gmail.com</a>. There is no automatic sending.</li>
+<li>A feedback email or bug report you send from the extension reaches us only if you send it.</li>
 </ul>
 
-<h2>7. Third-Party Services</h2>
-<p>
-  The Extension communicates with the following third-party services as part of its normal operation:
-</p>
-<ul>
-  <li>
-    <strong>Google APIs</strong> — Gmail, Contacts (People API), Calendar, and Drive APIs, used as described
-    above. These are governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">
-    Google's Privacy Policy</a>.
-  </li>
-</ul>
-<p>
-  No other third-party services receive your data.
-</p>
+<h2>7. AI features, transcription and third-party services</h2>
 
-<h2>8. Compliance with Google API Services User Data Policy</h2>
 <div class="highlight">
-  <p style="margin: 0;">
-    InboxUnleash's use and transfer of information received from Google APIs to any other app will adhere to the
-    <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">
-    Google API Services User Data Policy</a>, including the <strong>Limited Use</strong> requirements.
-  </p>
+<strong>AI and transcription features are optional.</strong> They work only if you entered your own API key (or turned on
+the browser's built-in transcription), and only after you gave explicit consent in a consent dialog, per content type and per project.
+You can withdraw any consent at any time.
 </div>
 
-<h2>9. GDPR — European Users</h2>
+<h3>Google Gemini — AI features</h3>
 <p>
-  If you are located in the European Economic Area, the United Kingdom, or Switzerland, you have specific rights
-  under the General Data Protection Regulation (GDPR).
+Features such as summaries, suggestions, translation, the personal assistant, invoice analysis and smart actions send the relevant content
+(for example, excerpts of email bodies, attached files, subjects and contacts you selected) to the <strong>Google Gemini API using your own API
+key</strong>. The request goes <strong>directly from your browser to Google</strong> and does not pass through our servers. Billing and settings
+are tied to your account and key. Under Google's terms, when you use a free-tier key Google may use the content to improve its products.
+With a paid key the paid-API terms apply. See the
+<a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener">Gemini API terms</a>.
 </p>
 
-<h3>Legal Basis</h3>
-<p>
-  Our legal basis for processing your information is your <strong>explicit consent</strong>, given when you install
-  the Extension and grant the requested Google permissions. You may withdraw this consent at any time by uninstalling
-  the Extension and revoking its access (see Section 11).
-</p>
-
-<h3>Data Controller</h3>
-<p>
-  For the purposes of GDPR, the data controller is <strong>InboxUnleash Tech Solutions</strong>. To exercise any
-  of the rights described below, contact us at
-  <a href="mailto:inboxunleash.privacy@gmail.com">inboxunleash.privacy@gmail.com</a>.
-</p>
-
-<h3>Your Rights Under GDPR</h3>
+<h3>Audio transcription</h3>
 <ul>
-  <li><strong>Right of access</strong> — You may request information about what data we hold about you. (In practice,
-      we hold no personal data on our servers; all data resides in your own Google account and your browser.)</li>
-  <li><strong>Right to rectification</strong> — You may correct inaccurate data. Since data resides in your own
-      Google account, corrections are made directly there.</li>
-  <li><strong>Right to erasure ("right to be forgotten")</strong> — You may delete all data created by the Extension
-      using the "Delete all my data" function in the Extension's settings. This action removes configuration files
-      from your Drive and clears local browser storage. You may also revoke the Extension's access to your Google
-      account at any time.</li>
-  <li><strong>Right to data portability</strong> — Your data is already in standard formats inside your own Google
-      account and can be exported using Google's standard export tools.</li>
-  <li><strong>Right to object</strong> — You may object to our processing of your data by uninstalling the Extension
-      at any time.</li>
-  <li><strong>Right to lodge a complaint</strong> — You have the right to lodge a complaint with your local data
-      protection authority.</li>
+<li><strong>Chrome's built-in speech recognition (default):</strong> The audio is played in the browser and sent through Chrome to Google's speech recognition services, subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>. The extension does not send the audio to our server.</li>
+<li><strong>Groq Whisper (optional):</strong> If you entered your own Groq key and chose this engine, the audio file is sent <strong>directly from your browser to api.groq.com</strong>. See <a href="https://groq.com/privacy-policy/" target="_blank" rel="noopener">Groq's Privacy Policy</a>.</li>
+<li>The final transcript is saved to your Google Drive.</li>
 </ul>
 
-<h3>International Data Transfers</h3>
+<h3>Other services</h3>
+<ul>
+<li><strong>Google APIs</strong> — Gmail, Contacts (People API), Calendar and Drive, used as described above and subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</li>
+<li><strong>Google Fonts</strong> — parts of the interface may load fonts from Google Fonts (fonts.googleapis.com), which receives your IP address like any site serving fonts.</li>
+<li><strong>Sites you asked to save</strong> — when you save a link or page, the extension accesses the site you requested, only after your approval in Chrome.</li>
+</ul>
 <p>
-  The Extension does not transfer your personal data outside your own Google account and your browser. All
-  processing happens locally on your device.
+We do not send your data to any other service. <strong>We do not use Google user data to train AI models and do not allow others to do so.</strong>
 </p>
 
-<h3>Data Retention</h3>
-<p>
-  We do not retain your data on any server. Data is retained only:
-</p>
+<h2>8. What we do <em>not</em> do</h2>
 <ul>
-  <li>In your Google account, for as long as you choose to keep it.</li>
-  <li>In your browser's local storage, until you uninstall the Extension or clear browser data.</li>
+<li>We do not operate a server that receives or stores the content of your emails, tasks or files.</li>
+<li>We do not sell, rent or share your data with third parties, other than the providers you turn on yourself (Section 7).</li>
+<li>We do not use your data for advertising or marketing targeting.</li>
+<li>We do not collect analytics about your email content or behavior. Usage data reaches us only if you sent it manually (Section 6).</li>
+<li>No person on our side reads your messages, files or contacts.</li>
 </ul>
 
-<h2>10. Data Security</h2>
-<p>
-  Because InboxUnleash processes your data entirely within your browser and your own Google account, the security
-  of that data depends primarily on the security of your Google account and your device. We recommend:
+<h2>9. Compliance with Google API Services User Data Policy</h2>
+<div class="highlight">
+<p style="margin: 0;">
+InboxUnleash's use and transfer to any other app of information received from Google APIs will adhere to the
+<a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>,
+including the <strong>Limited Use</strong> requirements. In particular: we use the data only to provide user-facing features; we do not transfer
+it to third parties except to provide the feature you enabled and with your consent; we do not use it for advertising; and we do not allow humans to read it, except with your
+explicit consent, for security purposes, or as required by law. We do not use Google data to train general AI models.
 </p>
+</div>
+
+<h2>10. GDPR — users in Europe</h2>
+<p>
+If you are located in the European Economic Area, the United Kingdom or Switzerland, you have specific rights under the General Data
+Protection Regulation (GDPR).
+</p>
+
+<h3>Legal basis</h3>
+<p>
+Our legal basis for processing your information is your <strong>explicit consent</strong>, given when you installed the extension and
+granted the requested Google permissions, and separately when you approved sending content to AI features or transcription. You can
+withdraw consent at any time (in the extension settings, or by removing the extension and revoking its access — see Section 12).
+</p>
+
+<h3>Data controller</h3>
+<p>
+For GDPR purposes, the data controller is <strong>InboxUnleash Tech Solutions</strong>. To exercise any of the rights below, contact us at
+<a href="mailto:inboxunleash.privacy@gmail.com">inboxunleash.privacy@gmail.com</a>.
+</p>
+
+<h3>Your rights under GDPR</h3>
 <ul>
-  <li>Enabling two-factor authentication on your Google account.</li>
-  <li>Keeping your browser and operating system up to date.</li>
-  <li>Reviewing connected apps in your Google account settings periodically.</li>
+<li><strong>Right of access</strong> — you can ask what data we hold about you. (We do not hold personal content on our servers; your data is in your Google account and your browser. We hold only usage data or feedback you chose to send.)</li>
+<li><strong>Right to rectification</strong> — corrections are made directly in your Google account.</li>
+<li><strong>Right to erasure</strong> — you can delete all data created by the extension with the "Delete all my data" function in the extension settings. This removes the files the extension created in your Drive and clears the browser's local storage. You can also request deletion of usage data or feedback you sent us by writing to inboxunleash.privacy@gmail.com.</li>
+<li><strong>Right to data portability</strong> — your data is in standard formats in your Google account and can be exported.</li>
+<li><strong>Right to object</strong> — you can object to processing by removing the extension or turning features off at any time.</li>
+<li><strong>Right to lodge a complaint</strong> — with your local data protection authority.</li>
 </ul>
 
-<h2>11. Your Rights and Choices</h2>
+<h3>International data transfers</h3>
+<p>
+The extension itself does not transfer data to our servers. If you enable AI features or transcription, content is sent from your browser to Google (Gemini or
+speech recognition) or to Groq, which may process it outside your country, including in the United States, under their own policies. Enabling these is your choice.
+</p>
+
+<h3>Data retention</h3>
 <ul>
-  <li>
-    <strong>Revoking access:</strong> You can revoke the Extension's access to your Google account at any time
-    by visiting <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">
-    myaccount.google.com/permissions</a>.
-  </li>
-  <li>
-    <strong>Deleting all your data:</strong> Use the "Delete all my data" function in the Extension's settings
-    to remove all configuration files the Extension created in your Drive, along with any locally cached data.
-    This is the recommended way to delete data created by the Extension, since the configuration files are
-    stored as hidden Drive files and are not easily visible through the standard Drive interface.
-  </li>
-  <li>
-    <strong>Restoring archived threads:</strong> If you have configured the Extension to auto-archive certain
-    email threads (via the one-way CRM feature), you can restore those threads to your Inbox at any time using
-    Gmail's standard tools.
-  </li>
-  <li>
-    <strong>Uninstalling the Extension:</strong> Removing the Extension from Chrome clears all data stored
-    locally in your browser by the Extension. Configuration files in your Drive remain until deleted using the
-    "Delete all my data" function described above.
-  </li>
+<li>In your Google account, for as long as you choose to keep it.</li>
+<li>In the browser's local storage, until you remove the extension or clear browser data.</li>
+<li>Usage data or feedback you sent us manually is kept in our mailbox and deleted on your request.</li>
+<li>At Google and Groq — under their retention policies, if you enabled those services.</li>
 </ul>
 
-<h2>12. Children</h2>
+<h2>11. Security</h2>
 <p>
-  InboxUnleash is not directed to children under 13 (or under 16 in jurisdictions where applicable). We do not
-  knowingly collect information from children.
+InboxUnleash processes your data in your browser and in your Google account, so security also depends on the security of your Google account
+and device. API keys you enter (Gemini, Groq) are kept in your browser's storage and are not sent to us. We recommend:
+</p>
+<ul>
+<li>Enable two-step verification on your Google account.</li>
+<li>Keep your browser and operating system up to date.</li>
+<li>Periodically review connected apps in your Google account settings.</li>
+<li>Restrict your API keys (quotas, usage limits) with the provider.</li>
+</ul>
+
+<h2>12. Your rights and choices</h2>
+<ul>
+<li><strong>Revoke access:</strong> You can revoke the extension's access to your Google account at any time at <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>.</li>
+<li><strong>Manage AI consents:</strong> You can withdraw any consent to send content to an AI provider in the extension settings, or simply remove your API key.</li>
+<li><strong>Delete all your data:</strong> Use "Delete all my data" in the extension settings to remove all files the extension created in your Drive, together with all locally stored data.</li>
+<li><strong>Restore archived threads:</strong> You can move them back to your inbox at any time using standard Gmail tools.</li>
+<li><strong>Remove the extension:</strong> Removing the extension from Chrome clears the data it stored locally in your browser. Files in your Drive remain until you delete them with the function described above.</li>
+</ul>
+
+<h2>13. Children</h2>
+<p>
+InboxUnleash is not intended for children under 13 (or under 16 in jurisdictions where that applies). We do not knowingly collect
+information from children.
 </p>
 
-<h2>13. Changes to This Policy</h2>
+<h2>14. Changes to this policy</h2>
 <p>
-  We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the
-  top of this page. Significant changes will be communicated through the Extension itself.
+We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the top. Material changes,
+in particular adding an outside provider that receives content, will be communicated to users through the extension itself and require new consent.
 </p>
 
-<h2>14. Contact</h2>
-<p>
-  For general questions about InboxUnleash:
-  <a href="mailto:inboxunleash@gmail.com">inboxunleash@gmail.com</a>
-</p>
-<p>
-  For bug reports or feature suggestions:
-  <a href="mailto:inboxunleash.feedback@gmail.com">inboxunleash.feedback@gmail.com</a>
-</p>
-<p>
-  For privacy-related inquiries (data access, deletion requests, GDPR matters):
-  <a href="mailto:inboxunleash.privacy@gmail.com">inboxunleash.privacy@gmail.com</a>
-</p>
+<h2>15. Contact</h2>
+<p>General questions about InboxUnleash: <a href="mailto:inboxunleash@gmail.com">inboxunleash@gmail.com</a></p>
+<p>Bug reports or feature requests: <a href="mailto:inboxunleash.feedback@gmail.com">inboxunleash.feedback@gmail.com</a></p>
+<p>Privacy inquiries (data access, deletion requests, GDPR matters): <a href="mailto:inboxunleash.privacy@gmail.com">inboxunleash.privacy@gmail.com</a></p>
 
 <footer>
-  © 2026 InboxUnleash Tech Solutions. All rights reserved.
+© 2026 InboxUnleash Tech Solutions. All rights reserved.
 </footer>
 
 </main>
